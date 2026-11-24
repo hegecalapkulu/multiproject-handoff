@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 (2026-11-24)
+
+- **Cheaper sessions, same information.** `mph-scan.py` (read-only, standard library) gathers in one call what used to take many steps: the dashboard, a project's load bundle, and the git facts for a handoff. It understands Turkish and English dates, paths with spaces and adopted files. Measured on a real Obsidian vault (copy, Claude Code, Sonnet): dashboard **12 → 3 steps, $0.20 → $0.10**; resume **3 steps, $0.12**.
+- Skills read the rules file directly, read and edit several files in one step, and **search the notes before saying they don't know**.
+- **Long-conversation hint** (`guard/mph-context.py`, part of `mph-guard`): suggests `mph-handoff` + a new session once when the conversation crosses 120k / 250k / 500k tokens.
+- From testing on a real vault: adoption proposes the Obsidian module off; existing settings notes are linked with `Also follow:`; the user's own rules count as a yes; handoff asks approvals inside the plan and sticks to it; labels in the user's language.
+- Windows: installer via Git Bash or WSL; `python` where `python3` is missing.
+
 ## 0.2.0 (2026-11-24)
 
 - **Adopt existing notes.** `mph-setup-project` looks around first and maps the notes a project already has (status notes, `TODO.md`, `docs/adr/`, research folders…) where they are; nothing is moved or renamed. Works for a whole folder or Obsidian vault of projects at once, and writes `PROJECTS.md`.

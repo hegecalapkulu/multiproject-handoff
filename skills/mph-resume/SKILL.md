@@ -27,7 +27,7 @@ Read as little as possible, but the right things. This skill changes no files.
 
 ### The dashboard
 
-**Fast path:** run `python3 <this skill's folder>/mph-scan.py` (RULES.md §5). It prints, for every project, the name, date, days ago, a STALE flag, the first state line and the first Now item. Build the dashboard from that output alone; read files by hand only if the scanner cannot run.
+**Fast path:** in the working folder (do not `cd`), run `python3 "<this skill's folder>/mph-scan.py"` (RULES.md §5). One call is enough; do not look for other copies. It prints, for every project, the name, date, days ago, a STALE flag, the first state line and the first Now item. Build the dashboard from that output alone; read files by hand only if the scanner cannot run.
 
 **By hand:** 
 For each project read **only**: the marker line and the `## Paths` table of its `PROJECT.md` (to find its resume note and backlog, which may have any name), the first ~15 lines of the resume note, and the first item under `## Now` (or the first open section) of the backlog. Nothing else yet. The name shown is the one in the marker. Sort by "Last updated", newest first:

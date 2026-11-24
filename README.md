@@ -4,7 +4,7 @@
 One dashboard for all your projects. Notes that grow with each project. An agent that learns how you work.</p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.2.0-blue" alt="version 0.2.0">
+<img src="https://img.shields.io/badge/version-0.3.0-blue" alt="version 0.3.0">
 <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
 <img src="https://img.shields.io/badge/format-Agent%20Skills%20(SKILL.md)-orange" alt="Agent Skills">
 <img src="https://img.shields.io/badge/works%20with-Claude%20Code%20·%20Codex%20·%20Gemini%20·%20Cursor%20·%20Copilot-lightgrey" alt="works with">

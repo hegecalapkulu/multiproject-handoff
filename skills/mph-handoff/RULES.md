@@ -65,12 +65,13 @@ A missing line means the default above.
 
 Every tool call makes the agent re-read the whole conversation, so **cost grows with the number of steps**, not with how much is read in one step.
 
-- **Use the scanner when you can run commands.** `mph-scan.py` sits next to this file (and in `~/.handoff/`). Run it from the working folder with `python3` (or `python` on Windows):
+- **Use the scanner when you can run commands.** `mph-scan.py` sits next to this file (and in `~/.handoff/`). Run it **from the working folder, without changing directory** (it searches below the folder it is run from), giving the script's full path, with `python3` (or `python` on Windows):
   - `python3 <skill folder>/mph-scan.py` → dashboard data for every project;
   - `python3 <skill folder>/mph-scan.py load <name>` → `PROJECT.md`, the resume note, the backlog's Now section, working-style notes and drift, in one output;
   - `python3 <skill folder>/mph-scan.py facts <name>` → git status, diff summary, commits since the resume note.
   It is read-only. If it fails or cannot run, do the same by hand (the skills describe how).
 - **Read several files in one step** when you can (parallel reads), instead of one per step.
+- **Write in as few steps as possible:** make independent edits to different files in the same step (parallel edits), and do not re-read a file whose content you already have from the scanner or an earlier read in this session.
 - **Search before saying you don't know.** If the user mentions something that is not in what was loaded ("we decided X last week"), search the project's decisions, daily logs and knowledge (one search across them) before answering. Loading less at the start is only safe because nothing is forgotten: it is in the notes, and you look when it is needed.
 
 ## 6. Safety (never broken, in any mode)

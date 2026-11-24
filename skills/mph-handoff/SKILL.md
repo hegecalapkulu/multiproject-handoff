@@ -64,7 +64,7 @@ To read a linked skill, open `../<skill-name>/SKILL.md` next to this skill's fol
 
 ## 5. The steps
 
-**5.1–5.4** as planned, following each skill's rules.
+**5.1–5.4** as planned, following each skill's rules. Prepare all the changes first, then **apply the edits to different files together in one step** (RULES.md §5); this is where most of a handoff's cost is.
 
 **5.5 Backlog and resume note**
 - Backlog: remove finished items (they are in the daily log now), add new ones to the right section. **Items for another project go to that project's backlog**; mention them in the report.
