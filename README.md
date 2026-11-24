@@ -7,7 +7,7 @@ One dashboard for all your projects. Notes that grow with each project. An agent
 
 <p align="center">
 <a href="https://github.com/hegecalapkulu/multiproject-handoff/actions/workflows/check.yml"><img src="https://github.com/hegecalapkulu/multiproject-handoff/actions/workflows/check.yml/badge.svg" alt="tests"></a>
-<img src="https://img.shields.io/badge/version-0.6.0-blue" alt="version 0.6.0">
+<img src="https://img.shields.io/badge/version-0.7.0-blue" alt="version 0.7.0">
 <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
 <img src="https://img.shields.io/badge/format-Agent%20Skills%20(SKILL.md)-orange" alt="Agent Skills">
 <img src="https://img.shields.io/badge/tested%20with-Claude%20Code%20·%20Codex-brightgreen" alt="tested with Claude Code and Codex">

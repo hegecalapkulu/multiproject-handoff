@@ -108,7 +108,7 @@ Run `mph-guard` and pick from a short checklist:
 | `ask_commands` | empty | asks before commands containing these words (`deploy.sh`, `npm publish`) |
 | `protect_paths` | empty | no edits or writes inside these folders |
 | `context_hint` | on | once per threshold, a note when the conversation gets long, and the agent suggests a handoff |
-| `context_hint_tokens` | 150000,300000,600000 | the thresholds (the first stays below where 200k-window models get compacted) |
+| `context_hint_tokens` | 500000,800000 | the thresholds, for 1M-window models; with a 200k-window model use `150000` (below where it gets compacted) |
 | `context_hint_command` | mph-handoff | the command it suggests (use your own, e.g. `/devir`) |
 | `model_advice` | on | before a clearly simple task on a large model, the agent offers once to switch to a lighter one; you decide |
 

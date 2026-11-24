@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.7.0 (2026-11-25)
 
-- **No git? Handoff offers it, once.** In a folder without git, `mph-handoff` adds one line to its plan: start version history so any bad change can be undone (stays on this computer). `yes` sets up git with a safe `.gitignore` (`.env`, `node_modules/`, local profile) and a first commit that leaves out secrets and huge files; `not now` asks again at the next handoff; `never` stops asking. The answer is kept as `Git:` in `PROJECT.md`. Never asked in `quick` mode. Tested in Claude Code (Sonnet) on a project without git: the plan showed the offer as one line; `yes` started git, kept `.env` out of the first commit and recorded `Git: on`.
+- **Long-conversation note starts later:** default thresholds are now 500k and 800k tokens (was 150k / 300k / 600k), for today's 1M-window models. On a 200k-window model, set `context_hint_tokens=150000` in `~/.handoff/guard.conf`.
+- **No git? Handoff offers to start it.** In a folder without git, `mph-handoff` adds one line to its plan: start version history so any bad change can be undone (stays on this computer). `yes` sets up git with a safe `.gitignore` (`.env`, `node_modules/`, local profile) and a first commit that leaves out secrets and huge files; `not now` asks again at the next handoff; `never` stops asking. The answer is kept as `Git:` in `PROJECT.md`. Never asked in `quick` mode. Tested in Claude Code (Sonnet) on a project without git: the plan showed the offer as one line; `yes` started git, kept `.env` out of the first commit and recorded `Git: on`.
 
 ## 0.6.0 (2026-11-24)
 

@@ -13,8 +13,8 @@ simple, mechanical task on a large model, offer once to switch to a lighter
 one (the user decides; nothing happens silently). `model_advice=off` disables it.
 
 Thresholds (tokens) come from `context_hint_tokens` in ~/.handoff/guard.conf,
-default 150000,300000,600000 (the first one stays below the ~160k where
-200k-window models get compacted). Set `context_hint=off` to disable.
+default 500000,800000 (for 1M-window models; on a 200k-window model, set
+150000 so it fires before the ~160k where those get compacted). Set `context_hint=off` to disable.
 `context_hint_command` sets the command it suggests (default mph-handoff;
 use your own, e.g. /devir, if you hand off differently).
 
@@ -31,7 +31,7 @@ STATE = os.environ.get("MPH_CONTEXT_STATE", os.path.join(HOME, "context-state.js
 
 
 def conf():
-    c = {"context_hint": "on", "context_hint_tokens": "150000,300000,600000", "model_advice": "on",
+    c = {"context_hint": "on", "context_hint_tokens": "500000,800000", "model_advice": "on",
          "context_hint_command": "mph-handoff"}
     try:
         for line in open(CONF, encoding="utf-8"):
@@ -118,7 +118,7 @@ def main():
     try:
         limits = sorted(int(x) for x in c["context_hint_tokens"].split(",") if x.strip())
     except ValueError:
-        limits = [150000, 300000, 600000]
+        limits = [500000, 800000]
     crossed = [t for t in limits if size >= t]
     top = crossed[-1] if crossed else 0
     if not crossed or state.get(sid, 0) >= top:  # below the thresholds, or already told at this level
