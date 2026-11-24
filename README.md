@@ -5,9 +5,25 @@
 `claude-handoff` is a small set of [Claude Code](https://claude.com/claude-code) skills that turn the end of a session into a clean handoff and the start of the next one into a 10-second resume. It's built for people who juggle **several projects at once** and keep losing context between them.
 
 ```
-/resume    → "Where we are: search works, 41 tests pass. Next: finish 'remove item'. Continue?"
-  ...work...
-/handoff   → tests checked · daily log appended · decision recorded · backlog updated · resume note rewritten · committed
+/resume
+
+You have 3 projects with notes:
+
+1. recipe-app      updated 1 day ago
+   Search works, 41 tests pass; shopping list half done. Now: finish "remove item".
+2. landing-page    updated 6 days ago
+   Waiting on headline copy from the client. Now: hero section.
+3. cli-tool        updated 23 days ago  ⚠ stale
+   v0.2 released; next is Windows support. Now: Windows CI runner.
+
+Which one? (number or name)
+```
+
+…work…
+
+```
+/handoff   → facts checked from git and tests · daily log appended · decision recorded
+             · backlog updated · resume note rewritten · committed
 ```
 
 No server, no database, no extra service. Just Markdown files in your repo and plain-English skills Claude follows.
@@ -50,6 +66,30 @@ Each file has one job:
 
 The key idea: **the resume note stays tiny because everything else has a home.** Before anything leaves `RESUME.md`, the handoff moves it to the daily log or the decision file. Nothing gets lost, and the next session reads one short file instead of your whole history.
 
+### Several projects in one folder
+
+Keep all your projects under one folder (a `~/code` directory, an Obsidian vault, a monorepo) and open Claude Code there:
+
+- **`/resume`** finds every `*/notes/RESUME.md` (two levels deep), reads only the first lines of each and shows the dashboard above, newest first. Projects you haven't touched in 14 days are marked **⚠ stale**, so nothing quietly dies.
+- **`/resume recipe-app`** skips the dashboard and opens that project directly.
+- **`/handoff`** works out which project the session was about from the files it touched, confirms in one sentence, and writes only into that project's notes. If the session touched two projects, it asks whether to hand off both.
+
+Opening Claude Code inside a single project works too: then `/resume` goes straight to it.
+
+### Where decisions are stored
+
+By default every decision goes to the project's `notes/DECISIONS.md`, in this format:
+
+```markdown
+## Tech
+- **SQLite full-text search instead of a search service** (2026-11-20). Why: one file, no extra server, fast enough for <100k recipes. (previously: Algolia)
+```
+
+- Every decision has a date and a one-sentence **why**, so a later session won't "helpfully" undo it.
+- A changed decision **replaces** the old one and keeps a short "(previously: …)". The full history is in git.
+- Suggestions are not decisions: a decision is only written after you agree.
+- Bigger projects can split decisions by topic. Add a map to `PROJECT.md`, for example `pricing → notes/decisions/pricing.md`, `architecture → docs/architecture.md`, and `/decision-log` files each decision in the right place.
+
 ### One set of skills, any number of projects
 
 The skills are generic. Everything project-specific lives in `notes/PROJECT.md`, which **overrides the defaults**: a different test command, a different folder layout, "push after every handoff", "never touch the production database". Add a new project and you add one file, not a new set of skills.
@@ -59,8 +99,8 @@ The skills are generic. Everything project-specific lives in `notes/PROJECT.md`,
 | Skill | What it does |
 |---|---|
 | `/setup-project` | Creates the `notes/` folder for a project, filled from its README and git history. Asks you 3 questions. Never overwrites. |
-| `/resume` | Starts a session: reads `PROJECT.md`, `RESUME.md` and the top of the backlog. Answers in ≤8 lines and asks what to do. Read-only. |
-| `/handoff` | Ends a session: runs the check command, appends the daily log, records decisions, updates the backlog, rewrites the resume note, commits. |
+| `/resume [project]` | Starts a session. With several projects: a one-screen dashboard first. Then reads `PROJECT.md`, `RESUME.md` and the `Now` part of the backlog, warns if commits happened since the last handoff, answers in ≤8 lines. Read-only. |
+| `/handoff [project]` | Ends a session: finds the right project, checks the facts from git and tests (not from memory), appends the daily log, records decisions, updates the backlog, rewrites the resume note (including what was tried and failed), commits. |
 | `/daily-log` | Writes today's log without the full handoff. |
 | `/decision-log` | Records a decision with its reason, replacing the old one if it changed. |
 | `/suggest-skill` | Looks at the session for work you repeated by hand and suggests ≤3 new skills, with evidence. Rule of three: the third time is a skill. |
@@ -99,7 +139,15 @@ These come from running this system daily on real projects:
 
 ## Example
 
-See [`examples/recipe-app/notes/`](examples/recipe-app/notes/) for a filled-in project: a resume note, a backlog, a decision that replaced an earlier one, and a daily log.
+[`examples/workspace/`](examples/workspace/) is a folder with three filled-in projects: exactly what the dashboard above reads. Open Claude Code in that folder after installing and type `/resume` to try it without touching your own projects.
+
+## How is this different from other handoff / memory-bank tools?
+
+There are good tools in this space, and some ideas here came from them. Most of them do one of two things: **one handoff file for one project** (a `HANDOFF.md` you paste into the next session) or a **memory bank** (several context files a single project keeps up to date). `claude-handoff` differs in three ways:
+
+1. **Many projects, one command.** The dashboard, `/resume <project>`, stale warnings, and a handoff that knows which project it is closing.
+2. **Each kind of information has a lifecycle.** Resume note: rewritten and short. Backlog: open items only. Decisions: replaced, with the reason. Daily log: append-only. That's why the file the next session reads stays under 60 lines after months of work.
+3. **Per-project overrides instead of per-project skills.** One `PROJECT.md` changes paths, checks and rules; the skills stay the same everywhere.
 
 ## FAQ
 

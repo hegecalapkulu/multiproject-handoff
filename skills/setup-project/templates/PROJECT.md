@@ -21,7 +21,8 @@
 - <!-- Bigger projects: e.g. pricing → notes/decisions/pricing.md, architecture → docs/architecture.md -->
 
 ## Resume note
-- At most ~60 lines. Sections: Where we are · Open questions · Next steps.
+- At most ~60 lines. Sections: Where we are · Tried, didn't work · Open questions · Next steps.
+- Mark this project stale on the /resume dashboard after: `14` days
 
 ## Commit / backup
 - Handoff commits `notes/` and finished work. Push: `no` <!-- yes / no -->

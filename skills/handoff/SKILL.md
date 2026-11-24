@@ -1,37 +1,58 @@
 ---
 name: handoff
-description: Close the current Claude Code session cleanly so the next session can pick up in seconds. Runs checks, appends to the daily log, records decisions, updates the backlog, rewrites a short resume note and commits. Use when the user says "handoff", "/handoff", "wrap up", "let's start a new session" or "save where we are".
+description: Close the current Claude Code session cleanly so the next session can pick up in seconds. Works out which project the session was about (also when several projects share one folder), checks the real state from git and tests, appends the daily log, records decisions, updates the backlog, rewrites a short resume note and commits. Use when the user says "handoff", "/handoff", "/handoff <project>", "wrap up", "let's start a new session" or "save where we are".
 ---
 
 # Handoff: end this session, prepare the next one
 
 The goal: a fresh session should understand where the project stands by reading **one short file** (`RESUME.md`), not by replaying this conversation.
 
-## 0. Find the project and its settings
+## 0. Which project was this session about?
 
-- The project is the folder this session is working in. If the working folder holds several projects, use the one this conversation was about. If that is unclear, ask the user in one sentence. Never guess.
-- If the project has `notes/PROJECT.md`, **read it first**. Paths, check commands and extra steps written there override every default below.
-- Defaults when there is no `PROJECT.md`:
-  - Resume note: `notes/RESUME.md`
-  - Daily log: `notes/daily/YYYY-MM-DD.md`
-  - Backlog: `notes/BACKLOG.md`
-  - Decisions: `notes/DECISIONS.md`
-- If the project has no `notes/` folder yet, do not create it silently. Ask: "This project has no notes setup yet. Shall I run setup-project?"
-- If the session belonged to no project (a one-off question), say so and stop.
+A **project** is any folder that contains `notes/RESUME.md` (or is about to get one).
 
-## Steps
+- **`/handoff <name>`** → that project (matched by folder name, case-insensitive).
+- **`/resume` was used in this session** → the project it opened.
+- **The working folder itself has `notes/`** → that is the project.
+- **Otherwise** (the session ran in a folder with several projects):
+  1. Look at which project folders this session actually changed or read: files edited, commands run, paths mentioned. Also check `git status` in each candidate.
+  2. **One clear candidate** → confirm in one sentence: "This session was about **recipe-app**. Handing that off?" Continue on yes.
+  3. **Work touched several projects** → list them and ask: "This session touched recipe-app and cli-tool. Hand off both, or only one?" If both, run the steps below once per project, each into its own notes.
+  4. **No candidate** (a one-off question) → say there is nothing to hand off and stop.
+- If the chosen project has no `notes/` folder yet, do not create it silently. Ask: "This project has no notes setup yet. Shall I run setup-project?"
 
-1. **Check.** If code changed in this session, run the project's check command (from `PROJECT.md`; otherwise the test suite if there is one). If it fails, stop and fix it first, or tell the user clearly that it is failing.
-2. **Daily log.** Append a short entry to today's log (at most ~8 bullets: what was done, what was decided, what is blocked). Use the template if the project has one. Only append, never rewrite earlier entries. If nothing was done in this session, skip this step.
-3. **Decisions.** If a decision was made, record it with the `decision-log` skill rules (read the target file first).
-4. **Backlog.** Remove finished items (make sure they are in the daily log first) and add new requests to the right section. The backlog only holds open work.
-5. **Resume note.** Read `RESUME.md` and rewrite it short (limit and sections come from `PROJECT.md`; default at most ~60 lines with: Where we are · Open questions · Next steps). Put "Last updated: YYYY-MM-DD" at the top. Finished details do not stay in the note; if they are not in the daily log yet, move them there first.
-6. **Commit.** If `PROJECT.md` names a backup command, run it. Otherwise, if the project is a git repo, `git add` the notes (and any finished work) and commit with a short message. Push only if `PROJECT.md` says the project pushes routinely.
-7. **Report.** Tell the user in a few lines what was saved, and how to start next time: "In the new session, run `/resume`."
+Then read the project's `notes/PROJECT.md` if it exists. **Paths, check commands and extra steps written there override every default below.** Defaults:
+
+- Resume note: `notes/RESUME.md`
+- Daily log: `notes/daily/YYYY-MM-DD.md`
+- Backlog: `notes/BACKLOG.md`
+- Decisions: `notes/DECISIONS.md`
+
+## 1. Get the facts from the repo, not from memory
+
+At the end of a long session, memory is at its least reliable. Before writing anything:
+
+- If the project is a git repo, run `git status`, `git diff --stat` and `git log --oneline` for this session's commits. Write what **actually** changed.
+- If code changed, run the project's check command (from `PROJECT.md`; otherwise the test suite if there is one). "Tests pass" is only written if they passed **during this handoff**. If they fail, fix them first or write plainly that they are failing.
+- Anything you cannot verify (for example "the client liked it") is written as reported by the user, not as fact.
+
+## 2. Write the notes
+
+1. **Daily log.** Append a short entry to today's log (at most ~8 bullets: done, decided, blocked). Use the template if the project has one. Only append, never rewrite earlier entries. Skip if nothing was done.
+2. **Decisions.** If a decision was made, record it with the `decision-log` skill rules (read the target file first).
+3. **Backlog.** Remove finished items (make sure they are in the daily log first) and add new requests to the right section. The backlog only holds open work.
+4. **Resume note.** Read `RESUME.md` and rewrite it short (limit and sections from `PROJECT.md`; default at most ~60 lines with: Where we are · Tried, didn't work · Open questions · Next steps). Put "Last updated: YYYY-MM-DD" at the top. The first line under "Where we are" is what the `/resume` dashboard shows, so make it the single most useful sentence. Finished details do not stay in the note; if they are not in the daily log yet, move them there first.
+   - **Tried, didn't work:** approaches that failed in this session and why, so the next session does not retry them. Drop entries once they no longer matter.
+
+## 3. Commit and report
+
+1. **Commit.** If `PROJECT.md` names a backup command, run it. Otherwise, if the project is a git repo, add the notes (and any finished work) and commit with a short message. Push only if `PROJECT.md` says the project pushes routinely.
+2. **Report** in a few lines: which project, what was saved, anything failing or unfinished, and how to start next time: "In the new session, run `/resume`" (or `/resume <name>` when the folder holds several projects).
 
 ## Rules
 
 - **Nothing gets lost.** Shortening the resume note means moving information to the daily log or decision file first, then removing it from the note.
 - **Never delete files.** Edit, append, or move. Old versions live in git history.
-- **Never claim work that did not happen.** If tests are failing or work is unfinished, the resume note says so plainly.
+- **Never claim work that did not happen.** Unfinished work and failing tests are written plainly.
 - **Never rewrite git history.** No force push, no reset, no rebase. If a push fails, report it.
+- **One project's notes never go into another project's files.**

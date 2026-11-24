@@ -8,7 +8,7 @@ description: Record a new decision, or a changed one, in the current project's d
 Decisions are the most expensive thing to lose between sessions. A new session that does not know *why* something was decided will happily undo it.
 
 ## 0. Find the project
-- The project is the folder this session is working in. If unclear, ask.
+- The project is chosen the same way as in `handoff` step 0: the project `/resume` opened, the working folder if it has `notes/`, or, in a folder with several projects, the one this session worked on (confirm in one sentence). If unclear, ask.
 - Read `notes/PROJECT.md` first if it exists: it may contain a map of "which kind of decision goes to which file".
 - Default: `notes/DECISIONS.md`. If it does not exist, ask before creating it.
 
