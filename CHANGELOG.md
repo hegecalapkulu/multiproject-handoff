@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- README demo GIF: a handoff in Claude Code, resumed the next day in Codex. Replies are real outputs from the test sessions, trimmed; `docs/demo/` holds the script to re-record it with `vhs`.
 - README and install docs: a ready prompt to paste into any AI tool so it installs multiproject-handoff itself (dry run first, then install after a yes).
 
 ## 0.5.0 (2026-11-24)
