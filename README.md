@@ -12,7 +12,8 @@ One dashboard for all your projects. Notes that grow with each project. An agent
 <img src="https://img.shields.io/badge/also%20reads%20it-Gemini%20·%20Antigravity%20·%20Cursor%20·%20Copilot-lightgrey" alt="other tools">
 </p>
 
-<p align="center"><img src="docs/demo.gif" alt="Hand off in Claude Code, resume the next day in Codex: same notes, any tool" width="820"></p>
+<p align="center"><img src="docs/demo.gif" alt="Hand off in Claude Code, resume the next day in Codex: same notes, any tool" width="820"><br>
+<sub><code>recipe-app</code> is one of the made-up sample projects in <a href="examples/workspace/"><code>examples/workspace/</code></a>. Try the same thing yourself there.</sub></p>
 
 ```
 > /mph-resume
