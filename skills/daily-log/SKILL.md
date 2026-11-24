@@ -6,7 +6,7 @@ description: Write today's work log for the current project. Use at the end of a
 # Daily log
 
 ## 0. Find the project
-- The project is chosen the same way as in `handoff` step 0: the project `/resume` opened, the working folder if it has `notes/`, or, in a folder with several projects, the one this session worked on (confirm in one sentence). If unclear, ask.
+- Use the **active project** of this session if one is set (see "The active project" in the `resume` skill); do not ask again. Otherwise choose it as in `handoff` step 0, and it becomes the active project.
 - Read `notes/PROJECT.md` first if it exists; its paths and extra steps apply.
 - Default: `notes/daily/YYYY-MM-DD.md` and `notes/BACKLOG.md`. If the folder does not exist, ask before creating it.
 

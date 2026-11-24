@@ -21,6 +21,15 @@ Defaults for `notes/RESUME.md`, `notes/BACKLOG.md` and `notes/daily/`. Decisions
 - Split a topic into a folder once it covers 4+ separate subjects.
 - Competitor names in these examples are fictional.
 
+## Project skills
+- seed-test-data: rebuilds the local test database with 50 sample recipes (file: .claude/skills/seed-test-data/SKILL.md)
+
+## Project agents
+- none yet (test-log-reader: asked, answer "later")
+
+## Suggestions
+- Suggestions: on
+
 ## Commit / backup
 - Handoff commits and pushes to `origin main`. Push: `yes`
 

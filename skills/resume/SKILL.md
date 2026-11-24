@@ -22,6 +22,15 @@ A **project** is any folder that contains `notes/RESUME.md`. Projects are found 
 
 A project's code does not have to sit next to its notes: if `notes/PROJECT.md` has a `Code` entry (table row or `Code:` line), that folder is where the code lives (run checks and git commands there).
 
+## The active project (shared by all skills)
+
+Once a project is chosen in a session, it becomes the **active project**, and every skill uses it **without asking again**:
+
+- It is set by `resume`, by the first skill that had to ask, or by the user naming a project ("let's work on cli-tool").
+- It changes only when the user says so: "switch to landing-page", `resume landing-page`, or clearly starts talking about another project. In that last case confirm once: "Switching to **landing-page**?"
+- Every skill that writes notes starts its report with the project name in brackets, e.g. `[recipe-app] daily log updated`, so a wrong project is visible at once.
+- If work in the session clearly touches a second project, the active project does not silently change; `handoff` sorts it out at the end.
+
 ## 1. Which project?
 
 - **`/resume <name>`** → use the project whose folder name matches `<name>` (case-insensitive; a unique prefix is enough). If nothing matches, show the dashboard below.
@@ -76,4 +85,4 @@ Which one? (number or name)
 
 - Read-only: this skill changes no files.
 - Never invent a status. If a note is missing or empty, say so.
-- From the moment a project is chosen, the rest of the session works in that project's folder; other skills (`handoff`, `daily-log`, `decision-log`) use it without asking again.
+- The chosen project becomes the active project (see above). Do not show the dashboard again in this session unless the user asks for it.

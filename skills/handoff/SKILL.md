@@ -12,7 +12,7 @@ The goal: a fresh session should understand where the project stands by reading 
 Projects are found as in the `resume` skill ("Finding projects"): a `PROJECTS.md` list first, then a scan for `*/notes/RESUME.md`. A project's code may live elsewhere (the `Code` entry in its `PROJECT.md`); run git and checks there.
 
 - **`/handoff <name>`** → that project (matched by folder name, case-insensitive).
-- **`/resume` was used in this session** → the project it opened.
+- **An active project is set in this session** (by `resume`, by an earlier skill, or by the user naming it; see "The active project" in the `resume` skill) → use it. Do not ask again. Still check that the session's work did not also touch another project (point 3 in the list below).
 - **The working folder itself has `notes/`** → that is the project.
 - **Otherwise** (the session ran in a folder with several projects):
   1. Look at which project folders this session actually changed or read: files edited, commands run, paths mentioned. Also check `git status` in each candidate.
@@ -49,7 +49,16 @@ First sort what this session produced into **state** (where we are → resume no
 5. **Resume note.** Read `RESUME.md` and rewrite it short (limit and sections from `PROJECT.md`; default at most ~60 lines with: Where we are · Tried, didn't work · Open questions · Next steps). Put "Last updated: YYYY-MM-DD" at the top. The first line under "Where we are" is what the `/resume` dashboard shows, so make it the single most useful sentence. Finished details do not stay in the note; if they are not in the daily log yet, move them there first.
    - **Tried, didn't work:** approaches that failed in this session and why, so the next session does not retry them. Drop entries once they no longer matter.
 
-## 3. Commit and report
+## 3. Light suggestion check (once per handoff, optional)
+
+Skip this step if `PROJECT.md` says `Suggestions: off`.
+
+1. Read `notes/SUGGESTIONS.md` (past answers) and skim the last ~10 daily logs, one line per entry.
+2. Is there **one** strong pattern: repeated manual work (→ `suggest-skill`) or repeated heavy, noisy work (→ `suggest-agent`) that meets the rule of three and is not blocked by a past answer?
+3. If yes, add **one line** at the end of the report, not a full proposal: "I noticed you wrote release notes by hand in 3 of the last 5 sessions. Want a skill for it? (yes / no / never / later)". On yes, run the full skill. Record any answer in `SUGGESTIONS.md` (an answer that arrives after the commit is committed at the next handoff).
+4. If no, say nothing. At most one such question per handoff.
+
+## 4. Commit and report
 
 1. **Commit.** If `PROJECT.md` names a backup command, run it. Otherwise, if the project is a git repo, add the notes (and any finished work) and commit with a short message. Push only if `PROJECT.md` says the project pushes routinely.
 2. **Report** in a few lines: which project, what was saved (including which topic files got new knowledge), anything failing or unfinished, and how to start next time: "In the new session, run `/resume`" (or `/resume <name>` when the folder holds several projects).

@@ -37,6 +37,15 @@
 - At most ~60 lines. Sections: Where we are · Tried, didn't work · Open questions · Next steps.
 - Mark this project stale on the /resume dashboard after: `14` days
 
+## Project skills
+<!-- Added by suggest-skill when you approve one. One line each. -->
+
+## Project agents
+<!-- Added by suggest-agent when you approve one. One line each, with the file path. -->
+
+## Suggestions
+- Suggestions: on <!-- on / off: whether handoff may ask one short "want a skill for this?" question -->
+
 ## Commit / backup
 - Handoff commits `notes/` and finished work. Push: `no` <!-- yes / no -->
 

@@ -17,7 +17,7 @@ Knowledge is anything a future session would want to look up again and that is n
 
 ## 0. Find the project and its map
 
-- Find the project as in `handoff` step 0.
+- Use the **active project** of this session if one is set; do not ask again. Otherwise choose it as in `handoff` step 0, and it becomes the active project.
 - Read the `## Knowledge map` section of `notes/PROJECT.md`. Each line maps a topic to a file or folder:
   ```markdown
   ## Knowledge map

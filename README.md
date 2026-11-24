@@ -127,6 +127,29 @@ The skills ship with defaults, not opinions you have to accept. Everything about
 - **Different projects, different structures.** A client project, a thesis and a side app can each have their own map and rules; the skills stay the same.
 - **Your structure is never "fixed" to fit a default.** The agent doesn't rename or move your folders unless you ask.
 
+## It learns your habits, and remembers your answers
+
+As a project grows, the same manual work keeps coming back: writing release notes, rebuilding test data, reading a 2,000-line test log to find two failures. The system notices, suggests turning it into a project skill or a helper agent, and **remembers what you said**:
+
+```
+> handoff
+  [recipe-app] … committed.
+  I noticed you rebuilt the test data by hand in 3 of the last 5 sessions.
+  Want a skill for it? (yes / no / never / later)
+```
+
+- **`suggest-skill`** turns repeated manual work into a project-specific skill. Session mode looks at this chat; project mode reviews the last ~10 daily logs and the project's README/scripts.
+- **`suggest-agent`** proposes an optional **helper agent** for heavy, noisy work (big logs, browser checks, data audits) that returns only the findings, so the main session stays small. Created as a real subagent where the tool supports it (Claude Code: `.claude/agents/`), or as a skill elsewhere.
+- **Every answer is stored** in `notes/SUGGESTIONS.md`: `yes` creates it, `never` is never asked again, `no` comes back only if the evidence at least doubles ("you declined this when it was 3 times; it's 7 now"), `later` returns after a few sessions.
+- **No nagging:** at most one short question per handoff, never the same idea twice in a session, and `Suggestions: off` in `PROJECT.md` turns it off.
+- Created skills and agents are listed in `PROJECT.md`, so every tool, and `menu`, knows they exist.
+
+## One question per session, not per command
+
+Once a project is chosen (by `resume`, by the first skill that needs it, or by saying "let's work on cli-tool"), it is the session's **active project**. Every skill uses it without asking again, and every report starts with `[recipe-app]` so a wrong project is obvious. It changes only when you say "switch to landing-page" or `resume landing-page`.
+
+Forgot the commands? Say **`menu`**: every skill on one screen, the active project, this project's own skills and agents, and the most useful next step.
+
 ## Where the files live
 
 The notes always live in a `notes/` folder **inside each project**, so they are versioned with the code. How you arrange the projects is up to you. Pick one of three layouts:
@@ -193,7 +216,9 @@ Each skill is a standard [`SKILL.md`](https://agentskills.io) file. In tools wit
 | `daily-log` | Today's log without the full handoff. |
 | `decision-log` | Records a decision with its reason, replacing the old one if it changed. Proposes splitting decisions by area as they grow. |
 | `knowledge` | Files research, competitors, interviews, strategy… into the right topic. Starts new topics, proposes splits and merges, keeps the knowledge map up to date. "organize notes" reviews the whole structure. |
-| `suggest-skill` | Spots work you repeated by hand in the session and suggests ≤3 new skills, with evidence. Rule of three: the third time becomes a skill. |
+| `suggest-skill` | Finds work you repeat by hand (this session, or the project's history) and suggests ≤3 project skills with evidence. Remembers your answers. |
+| `suggest-agent` | Suggests an optional helper agent for heavy, noisy work that returns only findings. Remembers your answers. |
+| `menu` | Every skill on one screen, plus the active project, its own skills and agents, and the next useful step. |
 
 ## Install
 
