@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.0 (2026-11-24)
 
 - **Logo:** a thinking meerkat in silhouette, glasses on and a pencil behind its ear, as the plugin icon (`.claude-plugin/icon.png`) and at the top of the README; `docs/logo/make_logo.py` redraws it.
 - **Uninstall:** `./install.sh --uninstall` (with `--dry-run` first) removes what was installed by **moving** it to `~/.handoff-removed/<date-time>/`: marked skill folders in every tool, our files in `~/.handoff/`, the guard's entries in `~/.claude/settings.json` and the `AGENTS.md` block, each with a copy kept. Foreign skills and hooks, personal working-style notes and all project notes stay. Steps in the README and `docs/install.md`, with a prompt to let an AI tool do it. Tested in `check.sh`.
