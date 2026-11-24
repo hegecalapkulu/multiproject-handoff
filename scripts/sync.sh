@@ -5,6 +5,7 @@ set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 for d in "$ROOT"/skills/*/; do
   cp "$ROOT/shared/RULES.md" "$d/RULES.md"
+  cp "$ROOT/shared/mph-scan.py" "$d/mph-scan.py"
   python3 - "$d/SKILL.md" "$ROOT/shared/LOOKUP.md" <<'PY'
 import re, sys
 skill, lookup = sys.argv[1], open(sys.argv[2]).read().strip()

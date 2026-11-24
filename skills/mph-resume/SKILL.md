@@ -7,7 +7,7 @@ description: Start an AI coding session (any agent) from the project notes inste
 
 <!-- mph:lookup:start -->
 > **Shared rules first.** Read `RULES.md` before anything else. Look for it in this order and stop at the first hit:
-> 1. `RULES.md` in this skill's own folder;
+> 1. `RULES.md` in this skill's own folder (the folder this `SKILL.md` was loaded from; many tools state it as the skill's base directory). Read it directly, without searching;
 > 2. `~/.handoff/RULES.md`;
 > 3. a search of the home folder, a few levels deep (skip `node_modules`, `.git`, `Library`, `AppData`), for a `RULES.md` whose first line contains `multiproject-handoff RULES`.
 >
@@ -27,6 +27,9 @@ Read as little as possible, but the right things. This skill changes no files.
 
 ### The dashboard
 
+**Fast path:** run `python3 <this skill's folder>/mph-scan.py` (RULES.md §5). It prints, for every project, the name, date, days ago, a STALE flag, the first state line and the first Now item. Build the dashboard from that output alone; read files by hand only if the scanner cannot run.
+
+**By hand:** 
 For each project read **only**: the marker line and the `## Paths` table of its `PROJECT.md` (to find its resume note and backlog, which may have any name), the first ~15 lines of the resume note, and the first item under `## Now` (or the first open section) of the backlog. Nothing else yet. The name shown is the one in the marker. Sort by "Last updated", newest first:
 
 ```
@@ -49,6 +52,10 @@ Which one? (number or name)
 The chosen project becomes the active project.
 
 ## 2. Load the project
+
+**Fast path:** run `python3 <this skill's folder>/mph-scan.py load <name>`: one output with everything below (1–5 and 7). Then go straight to step 3.
+
+**By hand** (read these in one step if your tool allows):
 
 1. `notes/PROJECT.md` (settings, maps, modules).
 2. The resume note in full (path from `PROJECT.md`; default `RESUME.md` in the notes folder).

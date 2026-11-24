@@ -1,4 +1,4 @@
-<!-- multiproject-handoff RULES v0.2.0 -->
+<!-- multiproject-handoff RULES v0.3.0 -->
 # multiproject-handoff: shared rules
 
 Every `mph-*` skill follows these rules. They are kept in one file so every skill, in every tool, applies them the same way.
@@ -61,7 +61,19 @@ A missing line means the default above.
 - Keep reports short: what changed, where, and anything unfinished or failing.
 - **Write in the user's language**: the language they write to you in (or, if unclear, the language of the project's notes), including headings and labels such as "Where we are". Keep file and command names as they are.
 
-## 5. Safety (never broken, in any mode)
+## 5. Fewer steps, same information
+
+Every tool call makes the agent re-read the whole conversation, so **cost grows with the number of steps**, not with how much is read in one step.
+
+- **Use the scanner when you can run commands.** `mph-scan.py` sits next to this file (and in `~/.handoff/`). Run it from the working folder with `python3` (or `python` on Windows):
+  - `python3 <skill folder>/mph-scan.py` → dashboard data for every project;
+  - `python3 <skill folder>/mph-scan.py load <name>` → `PROJECT.md`, the resume note, the backlog's Now section, working-style notes and drift, in one output;
+  - `python3 <skill folder>/mph-scan.py facts <name>` → git status, diff summary, commits since the resume note.
+  It is read-only. If it fails or cannot run, do the same by hand (the skills describe how).
+- **Read several files in one step** when you can (parallel reads), instead of one per step.
+- **Search before saying you don't know.** If the user mentions something that is not in what was loaded ("we decided X last week"), search the project's decisions, daily logs and knowledge (one search across them) before answering. Loading less at the start is only safe because nothing is forgotten: it is in the notes, and you look when it is needed.
+
+## 6. Safety (never broken, in any mode)
 
 - **Never delete files.** Edit, append, move (`git mv` in git repos) or archive. Old versions live in git.
 - **Never rewrite git history.** No force push, no reset, no rebase. A failed push is reported, not "fixed".

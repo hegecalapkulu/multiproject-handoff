@@ -8,6 +8,7 @@ for f in skills/*/SKILL.md; do
   echo "$name" | grep -Eq '^[a-z0-9-]{1,64}$' || { echo "invalid name: $name"; fail=1; }
   grep -q '^description: ' "$f" || { echo "no description: $f"; fail=1; }
   cmp -s shared/RULES.md "$(dirname "$f")/RULES.md" || { echo "RULES.md out of sync: $dir (run scripts/sync.sh)"; fail=1; }
+  cmp -s shared/mph-scan.py "$(dirname "$f")/mph-scan.py" || { echo "mph-scan.py out of sync: $dir (run scripts/sync.sh)"; fail=1; }
   grep -q 'mph:lookup:start' "$f" || { echo "lookup block missing: $f"; fail=1; }
 done
 python3 - <<'PY' || fail=1
@@ -27,7 +28,9 @@ T=$(mktemp -d); mkdir -p "$T/.claude"
 HOME="$T" ./install.sh >/dev/null || fail=1
 n=$(ls "$T/.claude/skills" | wc -l | tr -d ' '); [ "$n" -eq "$(ls skills | wc -l | tr -d ' ')" ] || { echo "installer installed $n skills"; fail=1; }
 [ -f "$T/.handoff/RULES.md" ] || { echo "installer did not place ~/.handoff/RULES.md"; fail=1; }
+[ -f "$T/.handoff/mph-context.py" ] || { echo "installer did not place the context hint"; fail=1; }
 [ -f "$T/.handoff/mph-guard.py" ] || { echo "installer did not place the guard script"; fail=1; }
+(cd examples/workspace && python3 ../../shared/mph-scan.py | grep -q "^PROJECTS 3") || { echo "scanner did not find the 3 example projects"; fail=1; }
 python3 scripts/test-guard.py >/dev/null || { echo "guard tests failed (run scripts/test-guard.py)"; fail=1; }
 for p in examples/workspace/*/; do
   find "$p" -maxdepth 3 -name PROJECT.md -exec head -1 {} \; | grep -q '^<!-- mph:project ' || { echo "example without marked PROJECT.md: $p"; fail=1; }

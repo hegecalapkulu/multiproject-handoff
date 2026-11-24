@@ -1,13 +1,13 @@
 ---
 name: mph-guard
-description: Set up or adjust the optional safety guard, a Claude Code hook that really blocks risky actions (deleting files, rewriting git history, reading .env secrets) and asks before others the user names (push, deploy, publish), with personal choices kept in ~/.handoff/guard.conf. Shows a short checklist with defaults, changes settings only after an explicit yes, and tests itself. Use when the user says "mph-guard", "/mph-guard", "set up the guard", "protect this folder", or when mph-setup-project offers it.
+description: Set up or adjust the optional safety guard and the long-conversation hint, a Claude Code hook that really blocks risky actions (deleting files, rewriting git history, reading .env secrets) and asks before others the user names (push, deploy, publish), with personal choices kept in ~/.handoff/guard.conf. Shows a short checklist with defaults, changes settings only after an explicit yes, and tests itself. Use when the user says "mph-guard", "/mph-guard", "set up the guard", "protect this folder", or when mph-setup-project offers it.
 ---
 
 # mph-guard: a real safety net, set up your way
 
 <!-- mph:lookup:start -->
 > **Shared rules first.** Read `RULES.md` before anything else. Look for it in this order and stop at the first hit:
-> 1. `RULES.md` in this skill's own folder;
+> 1. `RULES.md` in this skill's own folder (the folder this `SKILL.md` was loaded from; many tools state it as the skill's base directory). Read it directly, without searching;
 > 2. `~/.handoff/RULES.md`;
 > 3. a search of the home folder, a few levels deep (skip `node_modules`, `.git`, `Library`, `AppData`), for a `RULES.md` whose first line contains `multiproject-handoff RULES`.
 >
@@ -39,6 +39,7 @@ Adapt it to what you found, with the current values pre-selected:
   5. Ask before these commands: (e.g. deploy.sh, npm publish)      ______
   6. Never edit inside these folders: (from your Never list: dist/)  ______
   7. When a delete is blocked, suggest moving to: (e.g. ~/Desktop/To-delete/) ______
+  8. [x] Tell me when the conversation gets long (at 120k, 250k, 500k tokens) and suggest a handoff
 
 Enter keeps the marks as shown.
 ```
@@ -54,13 +55,19 @@ Enter keeps the marks as shown.
    ask_commands=deploy.sh,npm publish
    protect_paths=~/code/recipe-app/dist
    trash_folder=~/Desktop/To-delete
+   context_hint=on
+   context_hint_tokens=120000,250000,500000
    ```
 2. **Registering the hook changes Claude Code's security settings, so show the exact change first** and wait for a clear yes:
    ```json
    { "matcher": "Bash|Read|Edit|Write",
      "hooks": [ { "type": "command", "command": "python3 ~/.handoff/mph-guard.py" } ] }
    ```
-   added to `hooks.PreToolUse` in `~/.claude/settings.json`. Read the file, add only this entry (skip if it is already there), keep everything else exactly as it was, and check the result is valid JSON.
+   added to `hooks.PreToolUse` in `~/.claude/settings.json`, and, if item 8 is on,
+   ```json
+   { "hooks": [ { "type": "command", "command": "python3 ~/.handoff/mph-context.py" } ] }
+   ```
+   added to `hooks.UserPromptSubmit`. On Windows use `python` and the full path (`python %USERPROFILE%\\.handoff\\mph-guard.py`), since `~` and `python3` may not exist there. Read the file, add only this entry (skip if it is already there), keep everything else exactly as it was, and check the result is valid JSON.
 3. **Test it** without risk, by piping sample calls into the script:
    ```bash
    echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf demo"}}' | python3 ~/.handoff/mph-guard.py
@@ -68,6 +75,10 @@ Enter keeps the marks as shown.
    ```
    The first must print a `deny`, the second nothing. Report both results.
 4. Tell the user: changes take effect in new sessions; "mph-guard" again to change the choices; to switch it off, remove the entry from `settings.json` (the agent can do this too, after a yes).
+
+### About the long-conversation hint
+
+The model cannot reliably feel how long its own conversation is, but Claude Code records the size after every reply. `mph-context.py` reads that before each user message; when a threshold is first crossed it shows a one-line note and asks the agent to suggest `mph-handoff` once, at a natural stopping point. Thresholds are in tokens, not percent, because context windows differ between models (200k, 1M); the defaults suit both. Change them in `guard.conf`.
 
 ## Rules
 

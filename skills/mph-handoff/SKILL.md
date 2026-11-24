@@ -7,7 +7,7 @@ description: Close the current AI coding session cleanly so the next one can pic
 
 <!-- mph:lookup:start -->
 > **Shared rules first.** Read `RULES.md` before anything else. Look for it in this order and stop at the first hit:
-> 1. `RULES.md` in this skill's own folder;
+> 1. `RULES.md` in this skill's own folder (the folder this `SKILL.md` was loaded from; many tools state it as the skill's base directory). Read it directly, without searching;
 > 2. `~/.handoff/RULES.md`;
 > 3. a search of the home folder, a few levels deep (skip `node_modules`, `.git`, `Library`, `AppData`), for a `RULES.md` whose first line contains `multiproject-handoff RULES`.
 >
@@ -29,7 +29,7 @@ Principle: **do only what this session produced, and read a step's detailed rule
 
 ## 3. Gather facts, then show the plan
 
-1. **Facts from the repo, not from memory.** In a git repo: `git status`, `git diff --stat`, this session's `git log --oneline`. If code changed, run the check command from `PROJECT.md` (or the tests). "Tests pass" is written only if they passed now.
+1. **Facts from the repo, not from memory.** Fast path: `python3 <this skill's folder>/mph-scan.py facts <name>` (git status, diff summary, commits since the resume note, branch and remote, in one call). By hand: `git status`, `git diff --stat`, this session's `git log --oneline`. If code changed, run the check command from `PROJECT.md` (or the tests). "Tests pass" is written only if they passed now.
 2. **Sort what the session produced:** code changes · decisions · knowledge (research, competitors, interviews, strategy) · working-style observations · new or finished work items · items for other projects.
 3. **Show a one-line plan** and wait for OK (Enter / "yes") or a correction:
 
@@ -60,7 +60,7 @@ If a step will need something the user must approve (a new decision file, a new 
 | 5.6 Obsidian map | module on | `mph-obsidian-map` (only the notes changed now) |
 | 5.7 Suggestion question | module on | below |
 
-To read a linked skill, open `../<skill-name>/SKILL.md` next to this skill's folder. If it is not there, look in the same skills folders RULES.md was searched in.
+To read a linked skill, open `../<skill-name>/SKILL.md` next to this skill's folder (read all the needed ones in one step). If it is not there, look in the same skills folders RULES.md was searched in.
 
 ## 5. The steps
 

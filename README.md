@@ -125,7 +125,7 @@ All skills read one shared [`RULES.md`](shared/RULES.md) first: how projects are
 | One project only | `./install.sh --project ~/code/app [--tool claude]` |
 | No skill support (Cursor, Copilot, Windsurf…) | `./install.sh --agents-md ~/code` adds a short block to `AGENTS.md` |
 
-Add `--dry-run` to see what would happen, `--update` to refresh. Skill folders differ between tools and versions; if your tool doesn't see the skills, check its docs and use `--dir`. [Details →](docs/install.md)
+On Windows, run it from Git Bash (comes with Git for Windows) or WSL; see [Windows](docs/install.md#windows). Add `--dry-run` to see what would happen, `--update` to refresh. Skill folders differ between tools and versions; if your tool doesn't see the skills, check its docs and use `--dir`. [Details →](docs/install.md)
 
 </details>
 

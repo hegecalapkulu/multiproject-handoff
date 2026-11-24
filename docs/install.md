@@ -45,3 +45,13 @@ Run `mph-guard` and pick from a short checklist:
 Choices live in `~/.handoff/guard.conf`; change them any time by running `mph-guard` again. Registering the hook is shown to you first and needs your yes; existing hooks are never removed. Other tools (Codex, Gemini CLI, Cursor) have their own approval or sandbox settings; use those there.
 
 Test it yourself: `python3 scripts/test-guard.py`.
+
+## Windows
+
+- **The skills** are plain Markdown and work the same on Windows.
+- **The installer** is a shell script. Run it from **Git Bash** (it comes with Git for Windows, which Claude Code on Windows already uses): `./install.sh`. WSL works too.
+- **The scanner, guard and context hint** are Python (standard library only). Where `python3` is not a command, the agent uses `python` (or `py`) instead.
+- **Registering the guard on Windows:** use the full path in the hook command, for example `python %USERPROFILE%\\.handoff\\mph-guard.py`; `mph-guard` does this for you.
+
+Tested so far on macOS. Reports from Windows and Linux users are very welcome.
+
