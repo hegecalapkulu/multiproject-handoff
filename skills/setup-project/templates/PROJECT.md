@@ -43,6 +43,14 @@
 ## Project agents
 <!-- Added by suggest-agent when you approve one. One line each, with the file path. -->
 
+## Working style
+- Profile: local <!-- local: notes/working-style*.md is git-ignored (default) · committed: shared with the notes -->
+
+## Obsidian
+- Obsidian: off <!-- on: handoff keeps links, frontmatter and notes/_map.md up to date -->
+- Links: markdown <!-- markdown (also works on GitHub) | wikilinks -->
+- Canvas: off <!-- on: also keep notes/map.canvas up to date -->
+
 ## Suggestions
 - Suggestions: on <!-- on / off: whether handoff may ask one short "want a skill for this?" question -->
 

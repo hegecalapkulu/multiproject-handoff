@@ -68,10 +68,11 @@ Which one? (number or name)
 1. **Read `notes/PROJECT.md`** if it exists. It may change the paths below or add a step.
 2. **Read the full resume note** (`notes/RESUME.md` by default).
 3. **Read only the `## Now` section of the backlog.**
-4. **Note the knowledge map** in `PROJECT.md` (topic names only). Do not open topic files now; open one later only when the work needs it ("let's price this" → the pricing topic).
-5. **Quick health check**, only if `PROJECT.md` defines one. Run it and note the result.
-6. **Drift check:** if the project is a git repo, compare `git log -1 --format=%cs` with the note's "Last updated". If there are commits newer than the note, say so in one line ("3 commits since the last handoff; the note may be behind").
-7. **Do not read** daily logs, decision files, topic files or code unless the resume note points to them for the next step.
+4. **Read the working-style profiles** (`profile` skill): `~/.handoff/working-style.md` and the project's `notes/working-style*.md`, if they exist. Apply them quietly; do not recite them.
+5. **Note the knowledge map** in `PROJECT.md` (topic names only). Do not open topic files now; open one later only when the work needs it ("let's price this" → the pricing topic).
+6. **Quick health check**, only if `PROJECT.md` defines one. Run it and note the result.
+7. **Drift check:** if the project is a git repo, compare `git log -1 --format=%cs` with the note's "Last updated". If there are commits newer than the note, say so in one line ("3 commits since the last handoff; the note may be behind").
+8. **Do not read** daily logs, decision files, topic files or code unless the resume note points to them for the next step.
 
 ## 3. Answer in at most 8 lines
 

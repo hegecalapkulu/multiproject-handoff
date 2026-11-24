@@ -27,6 +27,14 @@ Defaults for `notes/RESUME.md`, `notes/BACKLOG.md` and `notes/daily/`. Decisions
 ## Project agents
 - none yet (test-log-reader: asked, answer "later")
 
+## Working style
+- Profile: local
+
+## Obsidian
+- Obsidian: on
+- Links: markdown
+- Canvas: off
+
 ## Suggestions
 - Suggestions: on
 

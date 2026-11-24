@@ -8,3 +8,5 @@
 | CookBase | Free, ad-supported web app; slow search | [cookbase.md](cookbase.md) |
 
 **Pattern so far:** nobody does a shared household shopping list well. (Hypothesis, 2 competitors checked.)
+
+Related: led to the decision [shared shopping list as v1 headline](../../decisions/product.md).

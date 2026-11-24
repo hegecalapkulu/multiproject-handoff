@@ -23,6 +23,8 @@ While working
   decision-log         record a decision and why
   knowledge            save research, competitors, interviews… · "organize notes"
   daily-log            today's log without a full handoff
+  profile              how I work with you: show, fix, "in this project I want…"
+  obsidian-map         link the notes, update the map note, draw a canvas
 
 Setup and growth
   setup-project        add the notes structure to a project

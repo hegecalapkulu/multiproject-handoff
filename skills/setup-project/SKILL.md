@@ -16,14 +16,17 @@ description: Set up the handoff notes structure (PROJECT.md, RESUME.md, BACKLOG.
    - `notes/BACKLOG.md`: sections `## Now`, `## Next`, `## Later`, empty unless the user names work.
    - `notes/DECISIONS.md`: empty heading list.
    - `notes/daily/_template.md` (from `daily-template.md`).
-5. **Ask the user three questions (plus one optional)** (in one message) and write the answers into `PROJECT.md`:
+5. **Ask the user these questions in one message** and write the answers into `PROJECT.md`:
    - What command tells us the project is healthy?
    - Should handoff push to the remote, or only commit?
    - Anything the assistant must never do in this project?
    - (Optional) Any way you like notes organized? (folder names, language, numbering) → written under "Structure rules".
-6. **Register it** if the user keeps a project list: if a `PROJECTS.md` exists in the parent folder or in `~/.handoff/`, add a line `- <name>: <path>` (append only). If the notes live apart from the code, write the code folder in the `Code` row of `PROJECT.md`.
-7. Commit the new `notes/` folder if the project is a git repo.
-8. Tell the user: "From now on: `/resume` to start a session, `/handoff` to end one."
+   - Your working-style profile stays **on this computer only** by default (not sent to GitHub). Keep it that way, or commit it with the notes? → `Profile: local` or `Profile: committed`.
+   - (Only if the notes are in an Obsidian vault, i.e. a `.obsidian/` folder above them) Keep the notes linked as an Obsidian map at every handoff? → the `## Obsidian` section.
+6. **Git-ignore the profile** unless the user chose `committed`: append `notes/working-style*.md` to the project's `.gitignore` (create it if missing; append only, never rewrite).
+7. **Register it** if the user keeps a project list: if a `PROJECTS.md` exists in the parent folder or in `~/.handoff/`, add a line `- <name>: <path>` (append only). If the notes live apart from the code, write the code folder in the `Code` row of `PROJECT.md`.
+8. Commit the new `notes/` folder if the project is a git repo.
+9. Tell the user: "From now on: `/resume` to start a session, `/handoff` to end one."
 
 ## Rules
 

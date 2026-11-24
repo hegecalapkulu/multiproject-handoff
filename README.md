@@ -144,6 +144,38 @@ As a project grows, the same manual work keeps coming back: writing release note
 - **No nagging:** at most one short question per handoff, never the same idea twice in a session, and `Suggestions: off` in `PROJECT.md` turns it off.
 - Created skills and agents are listed in `PROJECT.md`, so every tool, and `menu`, knows they exist.
 
+## It learns how you work, and shows you what it learned
+
+The agent knows your code, but relearns **how to work with you** every session. `profile` keeps that in two short files you can read and edit:
+
+| Layer | What goes there | Where |
+|---|---|---|
+| **Project profile** | How you work *in this project*: your knowledge of this domain, how much explanation you want, fast or careful, what you decide and what you leave to the agent | `notes/working-style.md` |
+| **General profile** | What's the same everywhere: language, tone, answer format, approval habits | `~/.handoff/working-style.md` |
+
+Because expertise belongs to a domain, not a person: you may want every step explained in a project where you're learning, and no explanations at all in one where you're the expert.
+
+- **Project first.** A new observation goes to the project profile.
+- **Promoted at two projects.** When the same item shows up in two projects, it moves to the general profile.
+- **The project wins** when it differs from the general profile.
+- **It changes as you do:** "explained step by step at first; since December prefers to move fast."
+- **Working style only, never personality.** Only what you said or clearly did, with evidence and a date. No guesses, nothing about health, mood or private life.
+- **Transparent:** every change is announced (`[profile] added (recipe-app): …`); say "profile" to see it, "remove that" to fix it.
+- **Local by default:** `setup-project` git-ignores the profile, so it never reaches GitHub. You can choose to commit it.
+
+See [`examples/home/.handoff/working-style.md`](examples/home/.handoff/working-style.md) and the project profiles in [`examples/workspace/`](examples/workspace/).
+
+## Works as a map in Obsidian
+
+Keep your projects in an Obsidian vault and turn on `Obsidian: on` in `PROJECT.md`. At each handoff, `obsidian-map`:
+
+- **links related notes**: a decision to the research behind it, a competitor to the decision it caused, a daily log to what it changed, so the graph shows real relations instead of loose dots;
+- **adds frontmatter tags** (`project/…`, `type/decision`, `type/knowledge`…) so you can color the graph by project or by note type;
+- **keeps a map note per project** (`notes/_map.md`) and **one for all projects** (`PROJECTS-MAP.md`), the center of the graph;
+- **draws a Canvas** (`notes/map.canvas`) of the project on request, or at every handoff with `Canvas: on`.
+
+Links are standard Markdown by default, so they also work on GitHub; switch to `[[wikilinks]]` if you prefer. It never moves notes and never touches your `.obsidian/` settings.
+
 ## One question per session, not per command
 
 Once a project is chosen (by `resume`, by the first skill that needs it, or by saying "let's work on cli-tool"), it is the session's **active project**. Every skill uses it without asking again, and every report starts with `[recipe-app]` so a wrong project is obvious. It changes only when you say "switch to landing-page" or `resume landing-page`.
@@ -218,6 +250,8 @@ Each skill is a standard [`SKILL.md`](https://agentskills.io) file. In tools wit
 | `knowledge` | Files research, competitors, interviews, strategy… into the right topic. Starts new topics, proposes splits and merges, keeps the knowledge map up to date. "organize notes" reviews the whole structure. |
 | `suggest-skill` | Finds work you repeat by hand (this session, or the project's history) and suggests ≤3 project skills with evidence. Remembers your answers. |
 | `suggest-agent` | Suggests an optional helper agent for heavy, noisy work that returns only findings. Remembers your answers. |
+| `profile` | Short, evidence-based notes on how you like to work: per project first, general once seen in two projects. Local by default. |
+| `obsidian-map` | Links related notes, adds tags, keeps map notes and an optional Canvas, so the notes form a real graph in Obsidian. |
 | `menu` | Every skill on one screen, plus the active project, its own skills and agents, and the next useful step. |
 
 ## Install

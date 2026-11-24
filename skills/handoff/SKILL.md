@@ -44,9 +44,10 @@ First sort what this session produced into **state** (where we are → resume no
 1. **Daily log.** Append a short entry to today's log (at most ~8 bullets: done, decided, blocked). Use the template if the project has one. Only append, never rewrite earlier entries. Skip if nothing was done.
 2. **Decisions.** If a decision was made, record it with the `decision-log` skill rules (read the target file first).
 3. **Knowledge.** File lasting knowledge with the `knowledge` skill rules: into existing topics directly; new topics, splits and other structure changes only after the user's OK (ask once, listing all proposals together). The daily log gets one line pointing to where it went.
-4. **Backlog.** Remove finished items (make sure they are in the daily log first) and add new requests to the right section. The backlog only holds open work.
+4. **Working style.** If something new and clearly observed about how the user works came up, update the profiles with the `profile` skill rules (project first; promote to general when the same item is in two projects). Say what changed, one line per item. If nothing new, touch nothing.
+5. **Backlog.** Remove finished items (make sure they are in the daily log first) and add new requests to the right section. The backlog only holds open work.
    - **Route items to the project they belong to.** If the session produced an idea, bug or request for *another* project ("the CLI needs the same fix"), add it to **that** project's backlog, not this one, and mention it in the report. If it fits no project, list it in the report and ask.
-5. **Resume note.** Read `RESUME.md` and rewrite it short (limit and sections from `PROJECT.md`; default at most ~60 lines with: Where we are · Tried, didn't work · Open questions · Next steps). Put "Last updated: YYYY-MM-DD" at the top. The first line under "Where we are" is what the `/resume` dashboard shows, so make it the single most useful sentence. Finished details do not stay in the note; if they are not in the daily log yet, move them there first.
+6. **Resume note.** Read `RESUME.md` and rewrite it short (limit and sections from `PROJECT.md`; default at most ~60 lines with: Where we are · Tried, didn't work · Open questions · Next steps). Put "Last updated: YYYY-MM-DD" at the top. The first line under "Where we are" is what the `/resume` dashboard shows, so make it the single most useful sentence. Finished details do not stay in the note; if they are not in the daily log yet, move them there first.
    - **Tried, didn't work:** approaches that failed in this session and why, so the next session does not retry them. Drop entries once they no longer matter.
 
 ## 3. Light suggestion check (once per handoff, optional)
@@ -60,8 +61,9 @@ Skip this step if `PROJECT.md` says `Suggestions: off`.
 
 ## 4. Commit and report
 
-1. **Commit.** If `PROJECT.md` names a backup command, run it. Otherwise, if the project is a git repo, add the notes (and any finished work) and commit with a short message. Push only if `PROJECT.md` says the project pushes routinely.
-2. **Report** in a few lines: which project, what was saved (including which topic files got new knowledge), anything failing or unfinished, and how to start next time: "In the new session, run `/resume`" (or `/resume <name>` when the folder holds several projects).
+1. **Obsidian map.** If `PROJECT.md` says `Obsidian: on`, run the `obsidian-map` skill for the notes changed in this session (links, frontmatter, map note; canvas only if `Canvas: on`).
+2. **Commit.** If `PROJECT.md` names a backup command, run it. Otherwise, if the project is a git repo, add the notes (git-ignored files such as local profiles stay out automatically) (and any finished work) and commit with a short message. Push only if `PROJECT.md` says the project pushes routinely.
+3. **Report** in a few lines: which project, what was saved (including which topic files got new knowledge), anything failing or unfinished, and how to start next time: "In the new session, run `/resume`" (or `/resume <name>` when the folder holds several projects).
 
 ## Rules
 
