@@ -29,7 +29,7 @@ Which one? (number or name)
 
 `multiproject-handoff` is a set of plain-Markdown [Agent Skills](https://agentskills.io) that end every AI coding session with a clean handoff and start the next one from a short note instead of from scratch, **across all your projects**. No server, no database, no account: just Markdown files next to your code.
 
-**Works best with Claude Code and Codex.** Both are tested end to end, including a handoff in one and a resume in the other. Other tools that read Agent Skills or `AGENTS.md` (Gemini CLI, Antigravity, Cursor, Copilot, Windsurf…) use the same files, but are not tested yet: some steps may need more manual work there. Reports are welcome.
+**Works best with Claude Code and Codex.** Both are tested end to end, including a handoff in one and a resume in the other. It is built on the open Agent Skills format, so it is highly compatible with other tools that read Agent Skills or `AGENTS.md` (Gemini CLI, Antigravity, Cursor, Copilot, Windsurf…). Minor differences in how a tool handles a step may occasionally come up; reports are welcome.
 
 ## What do you need?
 
