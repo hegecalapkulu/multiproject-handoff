@@ -57,6 +57,7 @@ Enter keeps the marks as shown.
    trash_folder=~/Desktop/To-delete
    context_hint=on
    context_hint_tokens=120000,250000,500000
+   context_hint_command=mph-handoff   # or the user's own handoff command
    ```
 2. **Registering the hook changes Claude Code's security settings, so show the exact change first** and wait for a clear yes:
    ```json

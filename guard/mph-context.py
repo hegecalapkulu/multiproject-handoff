@@ -9,6 +9,8 @@ natural stopping point. Each threshold fires once per session.
 
 Thresholds (tokens) come from `context_hint_tokens` in ~/.handoff/guard.conf,
 default 120000,250000,500000. Set `context_hint=off` to disable.
+`context_hint_command` sets the command it suggests (default mph-handoff;
+use your own, e.g. /devir, if you hand off differently).
 
 Registered by the mph-guard skill (after asking) under hooks.UserPromptSubmit:
   { "hooks": [ { "type": "command", "command": "python3 ~/.handoff/mph-context.py" } ] }
@@ -23,7 +25,8 @@ STATE = os.environ.get("MPH_CONTEXT_STATE", os.path.join(HOME, "context-state.js
 
 
 def conf():
-    c = {"context_hint": "on", "context_hint_tokens": "120000,250000,500000"}
+    c = {"context_hint": "on", "context_hint_tokens": "120000,250000,500000",
+         "context_hint_command": "mph-handoff"}
     try:
         for line in open(CONF, encoding="utf-8"):
             line = line.split("#", 1)[0].strip()
@@ -88,16 +91,17 @@ def main():
     except OSError:
         pass
     k = round(size / 1000)
+    cmd = c["context_hint_command"]
     print(json.dumps({
         "systemMessage": f"🧭 This conversation is about {k}k tokens long. "
-                         f"A fresh session after `mph-handoff` would be cheaper and sharper.",
+                         f"A fresh session after `{cmd}` would be cheaper and sharper.",
         "hookSpecificOutput": {
             "hookEventName": "UserPromptSubmit",
             "additionalContext": (
                 f"[multiproject-handoff] The conversation context is about {k}k tokens. "
                 "Answer the user's message first. Then, once, at a natural stopping point "
                 "(not in the middle of a task), suggest in one short sentence in the user's "
-                "language: run mph-handoff and continue in a new session. Do not repeat it."),
+                f"language: run {cmd} and continue in a new session. Do not repeat it."),
         },
     }))
     sys.exit(0)
