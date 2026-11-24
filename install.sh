@@ -1,46 +1,128 @@
 #!/bin/sh
-# claude-handoff installer.
-# Copies the skills into Claude Code's skills folder. Never deletes anything.
+# multiproject-handoff installer. Never deletes anything.
 #
-#   ./install.sh                 install for every project   (~/.claude/skills)
-#   ./install.sh --project DIR   install for one project only (DIR/.claude/skills)
-#   ./install.sh --update        overwrite skills installed earlier by this script
+#   ./install.sh                     install for every AI tool found on this machine
+#   ./install.sh --tool NAME         install for one tool: claude | codex | agents | gemini | antigravity
+#   ./install.sh --dir PATH          install into any skills folder you name
+#   ./install.sh --project DIR       install inside one project instead of your home folder
+#   ./install.sh --agents-md DIR     for tools without skill support: copy the skills to
+#                                    ~/.handoff/skills and add a short block to DIR/AGENTS.md
+#   ./install.sh --update            refresh skills this script installed before
+#   ./install.sh --dry-run           show what would happen, change nothing
 set -e
 
 SRC="$(cd "$(dirname "$0")" && pwd)/skills"
-DEST="$HOME/.claude/skills"
-UPDATE=0
+MARK=".multiproject-handoff"
+TOOL=""; DIR=""; PROJECT=""; AGENTS_DIR=""; UPDATE=0; DRY=0
+
+usage() { sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; }
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --project) [ -n "$2" ] || { echo "usage: --project DIR"; exit 1; }
-               DEST="$(cd "$2" && pwd)/.claude/skills"; shift 2 ;;
-    --update)  UPDATE=1; shift ;;
-    -h|--help) sed -n '2,8p' "$0"; exit 0 ;;
-    *) echo "unknown option: $1"; exit 1 ;;
+    --tool)      TOOL="$2"; shift 2 ;;
+    --dir)       DIR="$2"; shift 2 ;;
+    --project)   PROJECT="$(cd "$2" && pwd)"; shift 2 ;;
+    --agents-md) AGENTS_DIR="$(cd "$2" && pwd)"; shift 2 ;;
+    --update)    UPDATE=1; shift ;;
+    --dry-run)   DRY=1; shift ;;
+    -h|--help)   usage; exit 0 ;;
+    *) echo "unknown option: $1"; usage; exit 1 ;;
   esac
 done
 
-mkdir -p "$DEST"
+# Where each tool reads skills from. Paths change between tool versions:
+# if a tool does not see the skills, check its docs and use --dir.
+home_dir() {
+  case "$1" in
+    claude)      echo "$HOME/.claude/skills" ;;
+    codex)       echo "$HOME/.codex/skills" ;;
+    agents)      echo "$HOME/.agents/skills" ;;
+    gemini)      echo "$HOME/.gemini/skills" ;;
+    antigravity) echo "$HOME/.gemini/antigravity/skills" ;;
+    *) echo "unknown tool: $1 (use claude, codex, agents, gemini, antigravity, or --dir)" >&2; exit 1 ;;
+  esac
+}
+project_dir() {
+  case "$1" in
+    claude) echo "$PROJECT/.claude/skills" ;;
+    gemini) echo "$PROJECT/.gemini/skills" ;;
+    *)      echo "$PROJECT/.agents/skills" ;;   # the cross-tool project folder
+  esac
+}
+
 installed=0; skipped=0
-for d in "$SRC"/*/; do
-  name="$(basename "$d")"
-  target="$DEST/$name"
-  if [ -e "$target" ] && [ ! -f "$target/.claude-handoff" ]; then
-    echo "skip   $name  (a different skill with this name already exists at $target)"
-    skipped=$((skipped+1)); continue
+install_to() { # $1 = skills folder
+  dest="$1"
+  echo "→ $dest"
+  [ "$DRY" -eq 1 ] || mkdir -p "$dest"
+  for d in "$SRC"/*/; do
+    name="$(basename "$d")"; target="$dest/$name"
+    if [ -e "$target" ] && [ ! -f "$target/$MARK" ]; then
+      echo "  skip   $name  (a different skill with this name is already there)"
+      skipped=$((skipped+1)); continue
+    fi
+    if [ -e "$target" ] && [ "$UPDATE" -eq 0 ]; then
+      echo "  skip   $name  (already installed; use --update to refresh)"
+      skipped=$((skipped+1)); continue
+    fi
+    if [ "$DRY" -eq 0 ]; then
+      mkdir -p "$target"; cp -R "$d". "$target/"
+      echo "installed by multiproject-handoff" > "$target/$MARK"
+    fi
+    echo "  ok     $name"
+    installed=$((installed+1))
+  done
+}
+
+add_agents_block() { # $1 = folder that gets AGENTS.md
+  file="$1/AGENTS.md"
+  if [ -f "$file" ] && grep -q "multiproject-handoff:start" "$file"; then
+    echo "→ $file already has the multiproject-handoff block (unchanged)"; return
   fi
-  if [ -e "$target" ] && [ "$UPDATE" -eq 0 ]; then
-    echo "skip   $name  (already installed; run with --update to refresh)"
-    skipped=$((skipped+1)); continue
+  echo "→ adding the multiproject-handoff block to $file"
+  [ "$DRY" -eq 1 ] && return
+  {
+    [ -f "$file" ] && echo
+    echo "<!-- multiproject-handoff:start -->"
+    echo "## Session handoff (multiproject-handoff)"
+    echo
+    echo "This workspace keeps per-project notes in \`<project>/notes/\`. When the user says one of the"
+    echo "words below, read the matching file and follow it step by step:"
+    echo
+    echo "- \"resume\" / \"where were we\" → \`$HOME/.handoff/skills/resume/SKILL.md\`"
+    echo "- \"handoff\" / \"wrap up\" → \`$HOME/.handoff/skills/handoff/SKILL.md\`"
+    echo "- \"daily log\" → \`$HOME/.handoff/skills/daily-log/SKILL.md\`"
+    echo "- a decision is made → \`$HOME/.handoff/skills/decision-log/SKILL.md\`"
+    echo "- \"setup project\" → \`$HOME/.handoff/skills/setup-project/SKILL.md\`"
+    echo "- \"suggest skill\" → \`$HOME/.handoff/skills/suggest-skill/SKILL.md\`"
+    echo
+    echo "Never delete files or rewrite git history while doing this."
+    echo "<!-- multiproject-handoff:end -->"
+  } >> "$file"
+}
+
+if [ -n "$AGENTS_DIR" ]; then
+  install_to "$HOME/.handoff/skills"
+  add_agents_block "$AGENTS_DIR"
+elif [ -n "$DIR" ]; then
+  install_to "$DIR"
+elif [ -n "$PROJECT" ]; then
+  install_to "$(project_dir "${TOOL:-agents}")"
+elif [ -n "$TOOL" ]; then
+  install_to "$(home_dir "$TOOL")"
+else
+  found=0
+  [ -d "$HOME/.claude" ]             && { install_to "$(home_dir claude)"; found=1; }
+  [ -d "$HOME/.codex" ]              && { install_to "$(home_dir codex)"; found=1; }
+  [ -d "$HOME/.agents" ]             && { install_to "$(home_dir agents)"; found=1; }
+  [ -d "$HOME/.gemini/antigravity" ] && { install_to "$(home_dir antigravity)"; found=1; }
+  [ -d "$HOME/.gemini" ] && [ -f "$HOME/.gemini/settings.json" ] && { install_to "$(home_dir gemini)"; found=1; }
+  if [ "$found" -eq 0 ]; then
+    echo "No known AI tool folder found. Use --tool, --dir or --agents-md (see --help)."; exit 1
   fi
-  mkdir -p "$target"
-  cp -R "$d". "$target/"
-  echo "installed by claude-handoff" > "$target/.claude-handoff"
-  echo "ok     $name  -> $target"
-  installed=$((installed+1))
-done
+fi
 
 echo
+[ "$DRY" -eq 1 ] && echo "(dry run: nothing was changed)"
 echo "$installed installed, $skipped skipped."
-echo "Next: open a project in Claude Code and type /setup-project"
+echo "Next: open a project with your AI tool and say \"setup project\" (or /setup-project)."

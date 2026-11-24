@@ -30,4 +30,4 @@ Decisions are the most expensive thing to lose between sessions. A new session t
 ## Rules
 
 - Separate decisions from hypotheses. Anything not yet tested is written as "hypothesis".
-- **The user decides.** A suggestion from Claude is not a decision until the user agrees.
+- **The user decides.** A suggestion from the assistant is not a decision until the user agrees.

@@ -7,6 +7,7 @@
 
 | What | Where |
 |---|---|
+| Code | `.` <!-- the folder with the code; change it if your notes live apart from the code --> |
 | Resume note | `notes/RESUME.md` |
 | Daily logs | `notes/daily/YYYY-MM-DD.md` · template: `notes/daily/_template.md` |
 | Backlog | `notes/BACKLOG.md` (open work only) |

@@ -1,11 +1,11 @@
-# claude-handoff
+# multiproject-handoff
 
-**Stop re-explaining your project to Claude every session.**
+**Juggling several projects with AI coding agents? Stop re-explaining each one every session.**
 
-`claude-handoff` is a small set of [Claude Code](https://claude.com/claude-code) skills that turn the end of a session into a clean handoff and the start of the next one into a 10-second resume. It's built for people who juggle **several projects at once** and keep losing context between them.
+`multiproject-handoff` is a set of plain-Markdown skills that turn the end of a session into a clean handoff and the start of the next one into a 10-second resume, **across all your projects at once**. It works with Claude Code, Codex, Gemini CLI, Antigravity, Cursor, Copilot, or any agent that can read a file and follow instructions.
 
 ```
-/resume
+> resume
 
 You have 3 projects with notes:
 
@@ -22,63 +22,88 @@ Which one? (number or name)
 …work…
 
 ```
-/handoff   → facts checked from git and tests · daily log appended · decision recorded
-             · backlog updated · resume note rewritten · committed
+> handoff
+  facts checked from git and tests · daily log appended · decision recorded
+  · backlog updated (one item routed to cli-tool) · resume note rewritten · committed
 ```
 
-No server, no database, no extra service. Just Markdown files in your repo and plain-English skills Claude follows.
+No server, no database, no account. Markdown files next to your code, and instructions any agent can follow.
 
 ---
 
 ## The problem
 
-Long sessions get compacted or closed. A new session starts cold, so you either:
+Sessions end, get compacted, or you switch tools. The next session starts cold, so you either paste the same background again, let the agent re-read half the codebase, or watch it **undo a decision** you made last week because it doesn't know *why* you made it.
 
-- paste the same background again, or
-- let Claude re-read half the codebase (slow, expensive), or
-- watch it **undo a decision** you made two days ago because it doesn't know *why* you made it.
-
-Built-in memory helps with preferences. It doesn't keep **project state**: where the work stopped, what's open, what was decided and why.
+It gets worse with several projects: which one was blocked, which one did you forget, where did that idea for the other project go?
 
 ## How it works
 
-Each project gets a small `notes/` folder:
+Each project gets a small `notes/` folder. Each file has one job and its own lifecycle:
 
 ```
-your-project/
+recipe-app/
 └── notes/
-    ├── PROJECT.md      ← per-project settings: check command, paths, push or not, "never do X"
-    ├── RESUME.md       ← ≤60 lines: where we are · open questions · next steps
-    ├── BACKLOG.md      ← open work only (Now / Next / Later)
-    ├── DECISIONS.md    ← every decision + one-sentence "why"
+    ├── PROJECT.md      settings for this project: check command, paths, push or not, "never do X"
+    ├── RESUME.md       ≤60 lines: where we are · tried, didn't work · open questions · next steps
+    ├── BACKLOG.md      open work only (Now / Next / Later)
+    ├── DECISIONS.md    every decision + date + one-sentence "why"
     └── daily/
-        └── 2026-11-23.md   ← append-only log of what happened
+        └── 2026-11-23.md   append-only log of what happened
 ```
-
-Each file has one job:
 
 | File | Changes how | Read when |
 |---|---|---|
-| `RESUME.md` | Rewritten short at every handoff | Every `/resume` |
-| `BACKLOG.md` | Finished items leave, new ones arrive | Only the `Now` section on resume |
-| `DECISIONS.md` | Old decisions are replaced, with "(previously: …)" | When a decision matters |
-| `daily/*.md` | Append-only | Rarely; it's the history |
+| `RESUME.md` | Rewritten short at every handoff | Every resume (the first line feeds the dashboard) |
+| `BACKLOG.md` | Finished items leave, new ones arrive | Only the `Now` section |
+| `DECISIONS.md` | A changed decision replaces the old one, with "(previously: …)" | When a decision matters |
+| `daily/*.md` | Append-only | Rarely: it's the history |
 
-The key idea: **the resume note stays tiny because everything else has a home.** Before anything leaves `RESUME.md`, the handoff moves it to the daily log or the decision file. Nothing gets lost, and the next session reads one short file instead of your whole history.
+**The resume note stays tiny because everything else has a home.** Before anything leaves `RESUME.md`, the handoff moves it to the daily log or the decision file. Nothing gets lost, and the next session reads one short file instead of your whole history.
 
-### Several projects in one folder
+## Where the files live
 
-Keep all your projects under one folder (a `~/code` directory, an Obsidian vault, a monorepo) and open Claude Code there:
+The notes always live in a `notes/` folder **inside each project**, so they are versioned with the code. How you arrange the projects is up to you. Pick one of three layouts:
 
-- **`/resume`** finds every `*/notes/RESUME.md` (two levels deep), reads only the first lines of each and shows the dashboard above, newest first. Projects you haven't touched in 14 days are marked **⚠ stale**, so nothing quietly dies.
-- **`/resume recipe-app`** skips the dashboard and opens that project directly.
-- **`/handoff`** works out which project the session was about from the files it touched, confirms in one sentence, and writes only into that project's notes. If the session touched two projects, it asks whether to hand off both.
+**1. One parent folder (simplest).** All projects under one folder. Open your AI tool there; `resume` finds every `*/notes/RESUME.md` up to two levels deep.
 
-Opening Claude Code inside a single project works too: then `/resume` goes straight to it.
+```
+~/code/
+├── recipe-app/notes/
+├── landing-page/notes/
+└── clients/acme/cli-tool/notes/
+```
 
-### Where decisions are stored
+**2. Projects scattered around the disk.** Put a `PROJECTS.md` in the folder where you open your AI tool, or in `~/.handoff/PROJECTS.md` to use it everywhere:
 
-By default every decision goes to the project's `notes/DECISIONS.md`, in this format:
+```markdown
+- recipe-app: ~/code/recipe-app
+- landing-page: ~/clients/acme/landing-page
+- thesis: ~/Documents/thesis
+```
+
+**3. Notes apart from the code** (for example an Obsidian vault for notes, repos elsewhere). Keep `notes/` in the vault and point to the code from `PROJECT.md`:
+
+```markdown
+| Code | `~/code/recipe-app` |
+```
+
+Checks and git commands then run in the code folder; notes stay in the vault.
+
+## Does it split work into projects automatically?
+
+It keeps work **separated** by project automatically. It does not invent projects on its own.
+
+- **Notes go to the right project.** At handoff, the agent works out which project the session was about from the files it touched, confirms in one sentence, and writes only into that project's notes. If the session touched two projects, it asks whether to hand off both, each into its own notes.
+- **Ideas go to the project they belong to.** If, while working on `recipe-app`, you say "the CLI needs the same fix", that item goes into **`cli-tool`'s** backlog, not recipe-app's, and the report tells you.
+- **New work is caught.** If the session worked in a folder that has no notes yet, handoff asks: new project (`setup project`) or part of an existing one?
+- **Forgotten work is flagged.** Projects untouched for 14 days show as **⚠ stale** on the dashboard.
+
+What it won't do: break a big idea into several projects for you, or create a project without asking. You decide what a project is; it keeps them apart.
+
+## Where decisions are stored
+
+By default in each project's `notes/DECISIONS.md`:
 
 ```markdown
 ## Tech
@@ -86,89 +111,89 @@ By default every decision goes to the project's `notes/DECISIONS.md`, in this fo
 ```
 
 - Every decision has a date and a one-sentence **why**, so a later session won't "helpfully" undo it.
-- A changed decision **replaces** the old one and keeps a short "(previously: …)". The full history is in git.
-- Suggestions are not decisions: a decision is only written after you agree.
-- Bigger projects can split decisions by topic. Add a map to `PROJECT.md`, for example `pricing → notes/decisions/pricing.md`, `architecture → docs/architecture.md`, and `/decision-log` files each decision in the right place.
-
-### One set of skills, any number of projects
-
-The skills are generic. Everything project-specific lives in `notes/PROJECT.md`, which **overrides the defaults**: a different test command, a different folder layout, "push after every handoff", "never touch the production database". Add a new project and you add one file, not a new set of skills.
+- A changed decision **replaces** the old one and keeps "(previously: …)". Full history is in git.
+- A suggestion is not a decision: it's only written after you agree.
+- Bigger projects can split decisions by topic with a map in `PROJECT.md` (`pricing → notes/decisions/pricing.md`, `architecture → docs/architecture.md`).
 
 ## The skills
 
+Each skill is a standard [`SKILL.md`](https://agentskills.io) file. In tools with slash commands, type `/resume`; elsewhere, just say "resume".
+
 | Skill | What it does |
 |---|---|
-| `/setup-project` | Creates the `notes/` folder for a project, filled from its README and git history. Asks you 3 questions. Never overwrites. |
-| `/resume [project]` | Starts a session. With several projects: a one-screen dashboard first. Then reads `PROJECT.md`, `RESUME.md` and the `Now` part of the backlog, warns if commits happened since the last handoff, answers in ≤8 lines. Read-only. |
-| `/handoff [project]` | Ends a session: finds the right project, checks the facts from git and tests (not from memory), appends the daily log, records decisions, updates the backlog, rewrites the resume note (including what was tried and failed), commits. |
-| `/daily-log` | Writes today's log without the full handoff. |
-| `/decision-log` | Records a decision with its reason, replacing the old one if it changed. |
-| `/suggest-skill` | Looks at the session for work you repeated by hand and suggests ≤3 new skills, with evidence. Rule of three: the third time is a skill. |
+| `setup-project` | Creates `notes/` for a project from its README and git history, asks 3 questions, adds it to `PROJECTS.md` if you keep one. Never overwrites. |
+| `resume [project]` | With several projects: a one-screen dashboard first. Then reads `PROJECT.md`, `RESUME.md` and the backlog's `Now`, warns about commits since the last handoff, answers in ≤8 lines. Read-only. |
+| `handoff [project]` | Finds the right project, checks facts from git and tests (not from memory), appends the daily log, records decisions, routes backlog items to the right project, rewrites the resume note, commits. |
+| `daily-log` | Today's log without the full handoff. |
+| `decision-log` | Records a decision with its reason, replacing the old one if it changed. |
+| `suggest-skill` | Spots work you repeated by hand in the session and suggests ≤3 new skills, with evidence. Rule of three: the third time becomes a skill. |
 
 ## Install
 
 ```bash
-git clone https://github.com/hegecalapkulu/claude-handoff.git
-cd claude-handoff
-./install.sh
+git clone https://github.com/hegecalapkulu/multiproject-handoff.git
+cd multiproject-handoff
+./install.sh            # installs for every AI tool it finds on this machine
 ```
 
-That copies the skills to `~/.claude/skills/` so they work in every project. To install for a single project instead:
+Or choose:
 
-```bash
-./install.sh --project ~/code/my-app
-```
+| You use | Command | Installs to |
+|---|---|---|
+| Claude Code | `./install.sh --tool claude` | `~/.claude/skills/` |
+| Codex | `./install.sh --tool codex` | `~/.codex/skills/` |
+| Tools using the shared `.agents` folder | `./install.sh --tool agents` | `~/.agents/skills/` |
+| Gemini CLI | `./install.sh --tool gemini` | `~/.gemini/skills/` |
+| Antigravity | `./install.sh --tool antigravity` | `~/.gemini/antigravity/skills/` |
+| Any other skills folder | `./install.sh --dir PATH` | `PATH` |
+| One project only | `./install.sh --project ~/code/app [--tool claude]` | `app/.agents/skills/` (or the tool's project folder) |
+| A tool without skill support (Cursor, Copilot, Windsurf…) | `./install.sh --agents-md ~/code` | skills to `~/.handoff/skills/` + a short block in `~/code/AGENTS.md` that tells the agent which file to follow for "resume", "handoff", … |
 
-The installer **never deletes anything** and skips any existing skill with the same name. Use `--update` to refresh skills it installed before.
+Skill folders differ between tools and change between versions. If your tool doesn't see the skills, check its docs and use `--dir`. `--dry-run` shows what would happen without changing anything.
 
-Then open a project in Claude Code and type:
+The installer **never deletes anything**, skips any existing skill with the same name, appends to `AGENTS.md` only once (never overwrites it), and `--update` refreshes only what it installed itself.
 
-```
-/setup-project
-```
+Then open a project with your AI tool and say **"setup project"**.
+
+## Try it in 1 minute
+
+[`examples/workspace/`](examples/workspace/) holds three filled-in projects: exactly what the dashboard above reads. After installing, open your AI tool in that folder and say "resume".
 
 ## Safety rules built into every skill
 
-These come from running this system daily on real projects:
-
 - **Never delete files.** Notes are edited or appended. Old versions live in git.
 - **Never rewrite git history.** No force push, no reset. A failed push is reported, not "fixed".
-- **Never claim work that didn't happen.** Failing tests go in the resume note, in plain words.
-- **The user decides.** Claude's suggestion is not a decision until you agree.
+- **Never claim work that didn't happen.** "Tests pass" is only written if they passed during the handoff.
+- **You decide.** The agent's suggestion is not a decision until you agree.
 - **No secrets in notes.** No keys, passwords or real customer data.
-
-## Example
-
-[`examples/workspace/`](examples/workspace/) is a folder with three filled-in projects: exactly what the dashboard above reads. Open Claude Code in that folder after installing and type `/resume` to try it without touching your own projects.
 
 ## How is this different from other handoff / memory-bank tools?
 
-There are good tools in this space, and some ideas here came from them. Most of them do one of two things: **one handoff file for one project** (a `HANDOFF.md` you paste into the next session) or a **memory bank** (several context files a single project keeps up to date). `claude-handoff` differs in three ways:
+There are good tools in this space, and some ideas here come from them. Most do one of two things: **one handoff file for one project**, or a **memory bank** of context files for a single project, often tied to one tool. `multiproject-handoff` differs in four ways:
 
-1. **Many projects, one command.** The dashboard, `/resume <project>`, stale warnings, and a handoff that knows which project it is closing.
-2. **Each kind of information has a lifecycle.** Resume note: rewritten and short. Backlog: open items only. Decisions: replaced, with the reason. Daily log: append-only. That's why the file the next session reads stays under 60 lines after months of work.
-3. **Per-project overrides instead of per-project skills.** One `PROJECT.md` changes paths, checks and rules; the skills stay the same everywhere.
+1. **Many projects, one command:** the dashboard, `resume <project>`, stale warnings, a handoff that knows which project it is closing, and backlog items routed to the right project.
+2. **Each kind of information has its own lifecycle,** so the file the next session reads stays under 60 lines after months of work.
+3. **Per-project settings instead of per-project skills:** one `PROJECT.md` changes paths, checks and rules; the skills stay the same everywhere.
+4. **Not tied to one AI tool:** start a project in Claude Code, continue it in Codex or Gemini tomorrow. The notes are the same.
 
 ## FAQ
 
-**Doesn't Claude Code already have memory?**
-Yes, and use it for preferences ("I like small commits"). `claude-handoff` is for project *state*, which changes every day and belongs in the repo next to the code, where it's versioned and shared.
+**My tool already has memory.**
+Use it for preferences. This is for project *state*, which changes every day and belongs in the repo, next to the code, where it's versioned and shared with every tool and teammate.
 
 **Why Markdown files and not a database or an MCP server?**
-Because you can read them, diff them, edit them by hand and open them in Obsidian. If you stop using this tool tomorrow, your notes still make sense.
-
-**Does it work with Obsidian?**
-Yes. A `notes/` folder (or a whole vault of projects) opens fine in Obsidian. Point `PROJECT.md` at any paths you like.
+You can read them, diff them, edit them by hand and open them in Obsidian. If you stop using this tomorrow, your notes still make sense.
 
 **Can I change the folder layout?**
-Yes. Write the paths in `notes/PROJECT.md` and every skill follows them.
+Yes: write the paths in `notes/PROJECT.md` and every skill follows them.
 
 ## Contributing
 
 Issues and PRs are welcome, especially:
+- confirmed skill-folder paths for more tools
 - `PROJECT.md` examples for different stacks
-- improvements that make `/resume` read *less*
-- translations of the skills
+- changes that make `resume` read *less*
+- translations
 
 ## License
 

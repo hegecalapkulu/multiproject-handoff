@@ -1,19 +1,32 @@
 ---
 name: resume
-description: Start a Claude Code session from the project notes instead of from scratch. In a single project it loads the resume note and the top of the backlog; in a folder with several projects it first shows a short dashboard of all of them and asks which one. Use when the user says "resume", "/resume", "/resume <project>", "continue", "where were we" or opens a session to keep working.
+description: Start an AI coding session (any agent) from the project notes instead of from scratch. In a single project it loads the resume note and the top of the backlog; in a folder with several projects it first shows a short dashboard of all of them and asks which one. Use when the user says "resume", "/resume", "/resume <project>", "continue", "where were we" or opens a session to keep working.
 ---
 
 # Resume: start a session from the notes, not from memory
 
 Read as little as possible, but the right things.
 
-## 1. Which project?
+## Finding projects (shared by all skills)
 
-A **project** is any folder that contains `notes/RESUME.md`.
+A **project** is any folder that contains `notes/RESUME.md`. Projects are found in this order:
+
+1. **A `PROJECTS.md` file** in the working folder, or else in `~/.handoff/PROJECTS.md`. It lists projects that live anywhere on disk:
+   ```markdown
+   - recipe-app: ~/code/recipe-app
+   - landing-page: ~/clients/acme/landing-page
+   ```
+   Each path is the folder that holds `notes/`. Relative paths are relative to the `PROJECTS.md` file. Use the listed name, not the folder name.
+2. **Otherwise, scan below the working folder:** `*/notes/RESUME.md` and `*/*/notes/RESUME.md` (skip `node_modules`, `.git`, `vendor`, `dist`, `build`).
+3. **The working folder itself** counts as a project if it has `notes/RESUME.md`.
+
+A project's code does not have to sit next to its notes: if `notes/PROJECT.md` has a `Code` entry (table row or `Code:` line), that folder is where the code lives (run checks and git commands there).
+
+## 1. Which project?
 
 - **`/resume <name>`** → use the project whose folder name matches `<name>` (case-insensitive; a unique prefix is enough). If nothing matches, show the dashboard below.
 - **The working folder itself has `notes/RESUME.md`** → that is the project. Go to step 2.
-- **Otherwise, look for projects below the working folder:** find `*/notes/RESUME.md` and `*/*/notes/RESUME.md` (two levels deep; skip `node_modules`, `.git`, `vendor`, `dist`, `build`).
+- **Otherwise, collect projects** as described in "Finding projects" (`PROJECTS.md` first, then the scan).
   - **Exactly one found** → use it, and say which one in one line.
   - **More than one** → show the **dashboard** and wait for the user's pick.
   - **None** → say "No project notes found here." and offer `setup-project`.

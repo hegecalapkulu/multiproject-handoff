@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Close the current Claude Code session cleanly so the next session can pick up in seconds. Works out which project the session was about (also when several projects share one folder), checks the real state from git and tests, appends the daily log, records decisions, updates the backlog, rewrites a short resume note and commits. Use when the user says "handoff", "/handoff", "/handoff <project>", "wrap up", "let's start a new session" or "save where we are".
+description: Close the current AI coding session cleanly (Claude Code, Codex, Gemini, Cursor, Copilot or any agent that follows these instructions) so the next session can pick up in seconds. Works out which project the session was about (also when several projects share one folder), checks the real state from git and tests, appends the daily log, records decisions, updates the backlog, rewrites a short resume note and commits. Use when the user says "handoff", "/handoff", "/handoff <project>", "wrap up", "let's start a new session" or "save where we are".
 ---
 
 # Handoff: end this session, prepare the next one
@@ -9,7 +9,7 @@ The goal: a fresh session should understand where the project stands by reading 
 
 ## 0. Which project was this session about?
 
-A **project** is any folder that contains `notes/RESUME.md` (or is about to get one).
+Projects are found as in the `resume` skill ("Finding projects"): a `PROJECTS.md` list first, then a scan for `*/notes/RESUME.md`. A project's code may live elsewhere (the `Code` entry in its `PROJECT.md`); run git and checks there.
 
 - **`/handoff <name>`** → that project (matched by folder name, case-insensitive).
 - **`/resume` was used in this session** → the project it opened.
@@ -18,7 +18,8 @@ A **project** is any folder that contains `notes/RESUME.md` (or is about to get 
   1. Look at which project folders this session actually changed or read: files edited, commands run, paths mentioned. Also check `git status` in each candidate.
   2. **One clear candidate** → confirm in one sentence: "This session was about **recipe-app**. Handing that off?" Continue on yes.
   3. **Work touched several projects** → list them and ask: "This session touched recipe-app and cli-tool. Hand off both, or only one?" If both, run the steps below once per project, each into its own notes.
-  4. **No candidate** (a one-off question) → say there is nothing to hand off and stop.
+  4. **Work happened in a folder that has no notes** → ask: "This looks like a new project (`<folder>`). Set it up with setup-project, or file this work under an existing project?"
+  5. **No candidate** (a one-off question) → say there is nothing to hand off and stop.
 - If the chosen project has no `notes/` folder yet, do not create it silently. Ask: "This project has no notes setup yet. Shall I run setup-project?"
 
 Then read the project's `notes/PROJECT.md` if it exists. **Paths, check commands and extra steps written there override every default below.** Defaults:
@@ -41,6 +42,7 @@ At the end of a long session, memory is at its least reliable. Before writing an
 1. **Daily log.** Append a short entry to today's log (at most ~8 bullets: done, decided, blocked). Use the template if the project has one. Only append, never rewrite earlier entries. Skip if nothing was done.
 2. **Decisions.** If a decision was made, record it with the `decision-log` skill rules (read the target file first).
 3. **Backlog.** Remove finished items (make sure they are in the daily log first) and add new requests to the right section. The backlog only holds open work.
+   - **Route items to the project they belong to.** If the session produced an idea, bug or request for *another* project ("the CLI needs the same fix"), add it to **that** project's backlog, not this one, and mention it in the report. If it fits no project, list it in the report and ask.
 4. **Resume note.** Read `RESUME.md` and rewrite it short (limit and sections from `PROJECT.md`; default at most ~60 lines with: Where we are · Tried, didn't work · Open questions · Next steps). Put "Last updated: YYYY-MM-DD" at the top. The first line under "Where we are" is what the `/resume` dashboard shows, so make it the single most useful sentence. Finished details do not stay in the note; if they are not in the daily log yet, move them there first.
    - **Tried, didn't work:** approaches that failed in this session and why, so the next session does not retry them. Drop entries once they no longer matter.
 

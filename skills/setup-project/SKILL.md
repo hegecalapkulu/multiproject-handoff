@@ -19,9 +19,10 @@ description: Set up the handoff notes structure (PROJECT.md, RESUME.md, BACKLOG.
 5. **Ask the user three questions** (in one message) and write the answers into `PROJECT.md`:
    - What command tells us the project is healthy?
    - Should handoff push to the remote, or only commit?
-   - Anything Claude must never do in this project?
-6. Commit the new `notes/` folder if the project is a git repo.
-7. Tell the user: "From now on: `/resume` to start a session, `/handoff` to end one."
+   - Anything the assistant must never do in this project?
+6. **Register it** if the user keeps a project list: if a `PROJECTS.md` exists in the parent folder or in `~/.handoff/`, add a line `- <name>: <path>` (append only). If the notes live apart from the code, write the code folder in the `Code` row of `PROJECT.md`.
+7. Commit the new `notes/` folder if the project is a git repo.
+8. Tell the user: "From now on: `/resume` to start a session, `/handoff` to end one."
 
 ## Rules
 
