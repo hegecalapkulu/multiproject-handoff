@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1 (2026-11-25)
+
+- **Long-conversation note learns your window:** Claude Code records each automatic compaction with the size it happened at. The note now remembers that size per model (on its first run it also looks through recent transcripts for past compactions) and fires at **50%** of it, again at 80%. Different models, plans and settings get their own numbers. Only real "window is full" compactions count, not the app's precomputed early ones, and a learned size never stays below the longest conversation already seen for that model. Until a model has been compacted once, the fixed thresholds apply (500k, 800k). `context_window=<tokens>` in `~/.handoff/guard.conf` states the window outright; `context_hint_auto=off` turns the learning off. Tested in `check.sh` and on real transcripts.
+
 ## 0.7.0 (2026-11-25)
 
 - **Long-conversation note starts later:** default thresholds are now 500k and 800k tokens (was 150k / 300k / 600k), for today's 1M-window models. On a 200k-window model, set `context_hint_tokens=150000` in `~/.handoff/guard.conf`.

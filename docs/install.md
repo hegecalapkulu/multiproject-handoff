@@ -108,7 +108,9 @@ Run `mph-guard` and pick from a short checklist:
 | `ask_commands` | empty | asks before commands containing these words (`deploy.sh`, `npm publish`) |
 | `protect_paths` | empty | no edits or writes inside these folders |
 | `context_hint` | on | once per threshold, a note when the conversation gets long, and the agent suggests a handoff |
-| `context_hint_tokens` | 500000,800000 | the thresholds, for 1M-window models; with a 200k-window model use `150000` (below where it gets compacted) |
+| `context_window` | (empty) | your model's window in tokens, if you know it (e.g. `1000000`); the note then fires at 50% and 80% of it |
+| `context_hint_auto` | on | learn, per model, the size Claude Code auto-compacts at on this computer, and warn at 50% and 80% of it |
+| `context_hint_tokens` | 500000,800000 | fixed thresholds, used until a model's compaction size is known (or always, with `context_hint_auto=off`) |
 | `context_hint_command` | mph-handoff | the command it suggests (use your own, e.g. `/devir`) |
 | `model_advice` | on | before a clearly simple task on a large model, the agent offers once to switch to a lighter one; you decide |
 

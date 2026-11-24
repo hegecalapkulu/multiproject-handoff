@@ -39,7 +39,7 @@ Adapt it to what you found, with the current values pre-selected:
   5. Ask before these commands: (e.g. deploy.sh, npm publish)      ______
   6. Never edit inside these folders: (from your Never list: dist/)  ______
   7. When a delete is blocked, suggest moving to: (e.g. ~/Desktop/To-delete/) ______
-  8. [x] Tell me when the conversation gets long (at 500k and 800k tokens; 150k is better for 200k-window models) and suggest a handoff
+  8. [x] Tell me when the conversation gets long (at half the size where your model gets compacted, learned on this computer; 500k until then) and suggest a handoff
   9. [x] Before a clearly simple task on a large model, offer once to switch to a lighter one (I decide)
 
 Enter keeps the marks as shown.

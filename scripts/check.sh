@@ -59,4 +59,15 @@ HOME="$U" ./install.sh --uninstall --yes >/dev/null || fail=1
 [ -d "$U/.claude/skills/other-skill" ] || { echo "uninstall moved a skill that is not ours"; fail=1; }
 ls "$U"/.handoff-removed/*/.claude/skills/mph-resume/SKILL.md >/dev/null 2>&1 || { echo "uninstall did not keep a copy"; fail=1; }
 grep -q other.sh "$U/.claude/settings.json" && ! grep -q mph-guard "$U/.claude/settings.json" || { echo "uninstall hook cleanup wrong"; fail=1; }
+# context hint: learns the size a model was auto-compacted at and warns at half of it
+C=$(mktemp -d); mkdir -p "$C/projects/p"
+printf '%s\n' '{"type":"assistant","message":{"model":"m-test","usage":{"input_tokens":190000}}}' \
+  '{"type":"system","subtype":"compact_boundary","compactMetadata":{"trigger":"auto","preTokens":200000}}' \
+  '{"type":"assistant","message":{"model":"m-test","usage":{"input_tokens":110000}}}' > "$C/projects/p/s.jsonl"
+printf 'model_advice=off\n' > "$C/g.conf"
+echo "{\"session_id\":\"s\",\"transcript_path\":\"$C/projects/p/s.jsonl\"}" | MPH_GUARD_CONF="$C/g.conf" MPH_CONTEXT_STATE="$C/st.json" python3 guard/mph-context.py | grep -q "~200k window" || { echo "context hint did not learn the compaction size"; fail=1; }
+printf 'model_advice=off\ncontext_hint_auto=off\n' > "$C/g.conf"
+IN2="{\"session_id\":\"s2\",\"transcript_path\":\"$C/projects/p/s.jsonl\"}"
+OUT2=$(echo "$IN2" | MPH_GUARD_CONF="$C/g.conf" MPH_CONTEXT_STATE="$C/st2.json" python3 guard/mph-context.py)
+[ -z "$OUT2" ] || { echo "context_hint_auto=off still learned"; fail=1; }
 [ "$fail" -eq 0 ] && echo "all checks passed" || { echo "checks failed"; exit 1; }

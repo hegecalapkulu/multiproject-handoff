@@ -12,9 +12,16 @@ session it leaves the agent one short instruction: before starting a clearly
 simple, mechanical task on a large model, offer once to switch to a lighter
 one (the user decides; nothing happens silently). `model_advice=off` disables it.
 
-Thresholds (tokens) come from `context_hint_tokens` in ~/.handoff/guard.conf,
-default 500000,800000 (for 1M-window models; on a 200k-window model, set
-150000 so it fires before the ~160k where those get compacted). Set `context_hint=off` to disable.
+Thresholds: once Claude Code has auto-compacted a conversation on this
+computer, the size it compacted at is remembered per model (the first run also
+looks through recent transcripts for past compactions), and the note fires at
+50% and 80% of it. This adapts to each model, plan and setting by itself.
+Only real "window is full" compactions count (not the app's precomputed early
+ones), and a learned size never stays below the longest conversation already
+seen for that model. `context_window=<tokens>` in guard.conf states the window
+outright and wins. `context_hint_auto=off` turns the learning off. Until a model's size is known,
+the fixed `context_hint_tokens` from ~/.handoff/guard.conf are used, default
+500000,800000. Set `context_hint=off` to disable.
 `context_hint_command` sets the command it suggests (default mph-handoff;
 use your own, e.g. /devir, if you hand off differently).
 
@@ -32,7 +39,7 @@ STATE = os.environ.get("MPH_CONTEXT_STATE", os.path.join(HOME, "context-state.js
 
 def conf():
     c = {"context_hint": "on", "context_hint_tokens": "500000,800000", "model_advice": "on",
-         "context_hint_command": "mph-handoff"}
+         "context_hint_command": "mph-handoff", "context_hint_auto": "on"}
     try:
         for line in open(CONF, encoding="utf-8"):
             line = line.split("#", 1)[0].strip()
@@ -44,25 +51,76 @@ def conf():
     return c
 
 
-def context_size(path):
-    """Tokens in the context of the latest model call recorded in the transcript."""
-    size = 0
+def read_transcript(path):
+    """One pass over a transcript: the context size of the latest model call, the
+    latest model name, and the auto-compactions seen ({model: tokens before it})."""
+    size, model, compactions = 0, "", {}
     try:
         with open(path, encoding="utf-8", errors="replace") as f:
             for line in f:
+                if '"compact_boundary"' in line:
+                    try:
+                        meta = json.loads(line).get("compactMetadata") or {}
+                    except ValueError:
+                        continue
+                    pre = meta.get("preTokens")
+                    # only a real "window is full" compaction tells us the size; the app's own
+                    # precomputed (early) compactions do not
+                    if (meta.get("trigger") == "auto" and not meta.get("precomputed")
+                            and isinstance(pre, int) and pre > 20000 and model):
+                        compactions[model] = pre
+                    continue
                 if '"usage"' not in line:
                     continue
                 try:
                     msg = json.loads(line).get("message") or {}
                 except ValueError:
                     continue
-                u = msg.get("usage") if isinstance(msg, dict) else None
+                if not isinstance(msg, dict):
+                    continue
+                if msg.get("model") and not str(msg["model"]).startswith("<"):
+                    model = msg["model"]
+                u = msg.get("usage")
                 if u:
                     size = (u.get("input_tokens", 0) + u.get("cache_read_input_tokens", 0)
                             + u.get("cache_creation_input_tokens", 0))
     except OSError:
         pass
-    return size
+    return size, model, compactions
+
+
+def context_size(path):
+    """Tokens in the context of the latest model call recorded in the transcript."""
+    return read_transcript(path)[0]
+
+
+def learn_once(state, transcript):
+    """First run only: look through recent transcripts (same folder tree) for
+    auto-compactions, so the sizes are known before this session ever compacts."""
+    if state.get("learned_scan"):
+        return
+    state["learned_scan"] = 1
+    root = os.path.dirname(os.path.dirname(transcript)) if transcript else ""
+    files = []
+    try:
+        for d in os.listdir(root):
+            full = os.path.join(root, d)
+            if os.path.isdir(full):
+                for n in os.listdir(full):
+                    if n.endswith(".jsonl"):
+                        fp = os.path.join(full, n)
+                        files.append((os.path.getmtime(fp), fp))
+    except OSError:
+        return
+    for _, fp in sorted(files)[-200:]:  # oldest first, so the newest result wins
+        try:
+            with open(fp, encoding="utf-8", errors="replace") as f:
+                if '"compact_boundary"' not in f.read():
+                    continue
+        except OSError:
+            continue
+        for m, pre in read_transcript(fp)[2].items():
+            state["window:" + m] = pre
 
 
 MODEL_ADVICE = (
@@ -89,7 +147,9 @@ def load_state():
 
 
 def save_state(state):
-    state = dict(list(state.items())[-100:])  # keep the file small
+    keep = {k: v for k, v in state.items() if k.startswith(("window:", "seen:")) or k == "learned_scan"}
+    rest = [(k, v) for k, v in state.items() if k not in keep]
+    state = dict(rest[-100:], **keep)  # keep the file small, but never forget learned sizes
     try:
         os.makedirs(os.path.dirname(STATE), exist_ok=True)
         json.dump(state, open(STATE, "w", encoding="utf-8"))
@@ -114,11 +174,37 @@ def main():
         if out:
             print(json.dumps(out))
         sys.exit(0)
-    size = context_size(data.get("transcript_path", ""))
+    path = data.get("transcript_path", "")
+    size, model, compactions = read_transcript(path)
+    learned = None
     try:
-        limits = sorted(int(x) for x in c["context_hint_tokens"].split(",") if x.strip())
+        stated = int(c.get("context_window", "0") or 0)
     except ValueError:
-        limits = [500000, 800000]
+        stated = 0
+    if stated:
+        learned = stated  # the user said how big their window is: trust that
+    elif c["context_hint_auto"] == "on":
+        learn_once(state, path)
+        for m, pre in compactions.items():
+            state["window:" + m] = pre
+        if model:
+            # a conversation already ran this long without being compacted, so the
+            # window is at least this big: a learned size can only go up from here
+            seen = max(size, state.get("seen:" + model, 0))
+            state["seen:" + model] = seen
+            if state.get("window:" + model, 0) and state["window:" + model] < seen:
+                state["window:" + model] = seen
+        learned = state.get("window:" + model) if model else None
+        save_state(state)
+    if learned:
+        # This model was auto-compacted at about `learned` tokens on this computer:
+        # warn at half of that, and again at 80%.
+        limits = [learned // 2, learned * 4 // 5]
+    else:
+        try:
+            limits = sorted(int(x) for x in c["context_hint_tokens"].split(",") if x.strip())
+        except ValueError:
+            limits = [500000, 800000]
     crossed = [t for t in limits if size >= t]
     top = crossed[-1] if crossed else 0
     if not crossed or state.get(sid, 0) >= top:  # below the thresholds, or already told at this level
@@ -130,8 +216,9 @@ def main():
     k = round(size / 1000)
     cmd = c["context_hint_command"]
     hint = {
-        "systemMessage": f"🧭 This conversation is about {k}k tokens long. "
-                         f"A fresh session after `{cmd}` would be cheaper and sharper.",
+        "systemMessage": f"🧭 This conversation is about {k}k tokens long"
+                         + (f" (half of {model}'s ~{round(learned / 1000)}k window)" if learned and top == limits[0] else "")
+                         + f". A fresh session after `{cmd}` would be cheaper and sharper.",
         "hookSpecificOutput": {
             "hookEventName": "UserPromptSubmit",
             "additionalContext": (
