@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **CI:** `scripts/check.sh` runs on every push and pull request (GitHub Actions, Ubuntu and macOS); "tests" badge in the README.
+
 ## 0.4.0 (2026-11-24)
 
 - **Model advice** (part of the `mph-guard` hooks, on by default there): before a clearly simple, mechanical **and large** task on a large model (many files, long texts; small tasks are just done), the agent offers once to switch to a lighter one, with the exact command for the tool. The user decides; nothing is switched or delegated silently; it stays quiet if the agent can't tell which model it is. "Don't ask again" turns it off.
