@@ -1,6 +1,9 @@
 <!-- mph:project cli-tool -->
 # Project settings: cli-tool (example)
 
+## Language
+- Language: English
+
 ## Modules
 - knowledge: off
 - profile: on

@@ -4,6 +4,9 @@
 > Every mph-* skill reads this file first. The first line marks this folder as the project's notes folder; keep it.
 > Paths below are relative to this folder. Anything written here overrides the skills' defaults. Remove the lines you don't need.
 
+## Language
+- Language: English <!-- notes are written in it; replies too, unless the user writes in another language -->
+
 ## Modules
 - knowledge: on <!-- research, competitors, interviews… filed into topics -->
 - profile: on <!-- working-style notes; see "Working style" below -->

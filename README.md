@@ -8,7 +8,8 @@ One dashboard for all your projects. Notes that grow with each project. An agent
 <img src="https://img.shields.io/badge/version-0.4.0-blue" alt="version 0.4.0">
 <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
 <img src="https://img.shields.io/badge/format-Agent%20Skills%20(SKILL.md)-orange" alt="Agent Skills">
-<img src="https://img.shields.io/badge/works%20with-Claude%20Code%20·%20Codex%20·%20Gemini%20·%20Cursor%20·%20Copilot-lightgrey" alt="works with">
+<img src="https://img.shields.io/badge/tested%20with-Claude%20Code%20·%20Codex-brightgreen" alt="tested with Claude Code and Codex">
+<img src="https://img.shields.io/badge/also%20reads%20it-Gemini%20·%20Antigravity%20·%20Cursor%20·%20Copilot-lightgrey" alt="other tools">
 </p>
 
 ```
@@ -27,6 +28,8 @@ Which one? (number or name)
 ```
 
 `multiproject-handoff` is a set of plain-Markdown [Agent Skills](https://agentskills.io) that end every AI coding session with a clean handoff and start the next one from a short note instead of from scratch, **across all your projects**. No server, no database, no account: just Markdown files next to your code.
+
+**Works best with Claude Code and Codex.** Both are tested end to end, including a handoff in one and a resume in the other. Other tools that read Agent Skills or `AGENTS.md` (Gemini CLI, Antigravity, Cursor, Copilot, Windsurf…) use the same files, but are not tested yet: some steps may need more manual work there. Reports are welcome.
 
 ## What do you need?
 

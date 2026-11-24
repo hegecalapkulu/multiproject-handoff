@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- **Language choice in setup:** `mph-setup-project` asks for the language of notes and replies (English · Español · 中文 · Português · Türkçe · other), defaulting to the language the user writes in. It is kept as `Language:` in `PROJECT.md` and used whenever a message shows no language. Tested in Claude Code: a Turkish request got a Turkish screen with Türkçe as the default.
+- README: **tested with Claude Code and Codex**; other tools read the same files but are not tested yet and may need more manual steps.
 - **Tested across tools:** a handoff written by Claude Code was resumed by Codex (0.172) in the same folder, with the right state and next step, in 3 steps. Fixes from that test: the rules lookup now says plainly that `RULES.md` sits next to `SKILL.md` (Codex looked one folder up), and a bare command such as `mph-resume recipe-app` is answered in the language of the notes (Codex once answered in another language).
 - README: use several AI tools on a project **one at a time**.
 - **One-line install for Claude Code:** the repo is now a Claude Code plugin marketplace. `/plugin install multiproject-handoff --marketplace hegecalapkulu/multiproject-handoff` installs all 12 skills (no hooks; the guard stays opt-in). Tested with a real session: `/mph-resume` showed the example dashboard in 4 steps, about $0.11.

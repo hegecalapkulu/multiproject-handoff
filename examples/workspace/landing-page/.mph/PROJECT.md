@@ -5,6 +5,9 @@
 > `mph-setup-project` adopted them where they were: nothing was moved or renamed.
 > `notes/` was already used for meeting notes, so these settings live in `.mph/`.
 
+## Language
+- Language: English
+
 ## Modules
 - knowledge: off
 - profile: off

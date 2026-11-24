@@ -58,23 +58,25 @@ New, in .mph/ (notes/ is already used for something else):
   PROJECT.md (settings) · daily/ · SUGGESTIONS.md
 
 A few choices (Enter keeps the default):
-  1. Modules: knowledge ✓ · profile ✓ · suggestions ✓ · obsidian ✗
-  2. Push after each handoff? no
-  3. Your working-style notes stay on this computer only? yes
-  4. Anything I must never do here? (e.g. "never touch dist/")
-  5. Safety guard (blocks deleting files, rewriting git history, reading .env)? set up / skip
+  1. Language for notes and replies: 1 English · 2 Español · 3 中文 · 4 Português · 5 Türkçe · 6 other: ___   (default: English)
+  2. Modules: knowledge ✓ · profile ✓ · suggestions ✓ · obsidian ✗
+  3. Push after each handoff? no
+  4. Your working-style notes stay on this computer only? yes
+  5. Anything I must never do here? (e.g. "never touch dist/")
+  6. Safety guard (blocks deleting files, rewriting git history, reading .env)? set up / skip
 
 OK?
 ```
 
 - **In adopt / adopt many, propose `obsidian` off** even inside a vault, and say why in a few words: it adds a header block and links to many existing notes. The user can switch it on later.
-- **Only ask what you could not work out.** If there is no Obsidian vault, do not mention Obsidian. If the guard is already set up on this machine, skip question 5.
+- **Only ask what you could not work out.** If there is no Obsidian vault, do not mention Obsidian. If the guard is already set up on this machine, skip the guard question.
+- **Language:** always ask, with the default set to the language the user writes in (or, in adopt, the language of their existing notes). Show the five options and "other" exactly as above, each language in its own name; "other" takes any language the user types. In adopt many, ask once for all projects unless the user changes one.
 - In **adopt many**, show one compact block per project (found notes + proposal) and let the user accept all, or skip or change single projects.
 - The user can correct any line ("decisions are in `01 Kararlar/`").
 
 ## 4. Write (after OK)
 
-1. **`PROJECT.md`** in the notes folder, from `templates/PROJECT.md`. **First line: `<!-- mph:project <name> -->`.** If the project already has a settings note for other skills (for example a "project settings" note with a decision map, report rules or a backup command), add a line `- Also follow: <path to it>` at the top of `PROJECT.md`, and copy nothing from it: its rules then apply to every mph skill too. Fill `## Paths` with the adopted files (paths relative to the notes folder, e.g. `../TODO.md`), `## Modules`, check command, push, "Never" list, and the existing folders as decision and knowledge maps.
+1. **`PROJECT.md`** in the notes folder, from `templates/PROJECT.md`. **First line: `<!-- mph:project <name> -->`.** If the project already has a settings note for other skills (for example a "project settings" note with a decision map, report rules or a backup command), add a line `- Also follow: <path to it>` at the top of `PROJECT.md`, and copy nothing from it: its rules then apply to every mph skill too. Write the chosen language under `## Language`. Fill `## Paths` with the adopted files (paths relative to the notes folder, e.g. `../TODO.md`), `## Modules`, check command, push, "Never" list, and the existing folders as decision and knowledge maps.
 2. **Only the files that do not exist yet**, from `templates/`: a resume note if none was adopted (filled from what you learned; "Next steps" left for the user), backlog, decisions, `daily/_template.md`. Never overwrite or move an existing file.
 3. **Adopted files keep their format.** Skills write into them following the style they already have (headings, language, numbering), and add only what they need.
 4. **Profile:** unless the user chose to share it, append `<notes folder>/working-style*.md` to the project's `.gitignore` (append only; create the file if missing).

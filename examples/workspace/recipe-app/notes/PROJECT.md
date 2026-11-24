@@ -1,6 +1,9 @@
 <!-- mph:project recipe-app -->
 # Project settings: recipe-app (example)
 
+## Language
+- Language: English
+
 ## Modules
 - knowledge: on
 - profile: on
