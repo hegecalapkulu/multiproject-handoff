@@ -39,17 +39,20 @@ At the end of a long session, memory is at its least reliable. Before writing an
 
 ## 2. Write the notes
 
+First sort what this session produced into **state** (where we are → resume note), **decisions** (what we chose and why → decision files) and **knowledge** (research, competitors, interviews, strategy, anything worth looking up again → topic files). Knowledge that only lives in the chat is lost at the end of the session, so look for it on purpose.
+
 1. **Daily log.** Append a short entry to today's log (at most ~8 bullets: done, decided, blocked). Use the template if the project has one. Only append, never rewrite earlier entries. Skip if nothing was done.
 2. **Decisions.** If a decision was made, record it with the `decision-log` skill rules (read the target file first).
-3. **Backlog.** Remove finished items (make sure they are in the daily log first) and add new requests to the right section. The backlog only holds open work.
+3. **Knowledge.** File lasting knowledge with the `knowledge` skill rules: into existing topics directly; new topics, splits and other structure changes only after the user's OK (ask once, listing all proposals together). The daily log gets one line pointing to where it went.
+4. **Backlog.** Remove finished items (make sure they are in the daily log first) and add new requests to the right section. The backlog only holds open work.
    - **Route items to the project they belong to.** If the session produced an idea, bug or request for *another* project ("the CLI needs the same fix"), add it to **that** project's backlog, not this one, and mention it in the report. If it fits no project, list it in the report and ask.
-4. **Resume note.** Read `RESUME.md` and rewrite it short (limit and sections from `PROJECT.md`; default at most ~60 lines with: Where we are · Tried, didn't work · Open questions · Next steps). Put "Last updated: YYYY-MM-DD" at the top. The first line under "Where we are" is what the `/resume` dashboard shows, so make it the single most useful sentence. Finished details do not stay in the note; if they are not in the daily log yet, move them there first.
+5. **Resume note.** Read `RESUME.md` and rewrite it short (limit and sections from `PROJECT.md`; default at most ~60 lines with: Where we are · Tried, didn't work · Open questions · Next steps). Put "Last updated: YYYY-MM-DD" at the top. The first line under "Where we are" is what the `/resume` dashboard shows, so make it the single most useful sentence. Finished details do not stay in the note; if they are not in the daily log yet, move them there first.
    - **Tried, didn't work:** approaches that failed in this session and why, so the next session does not retry them. Drop entries once they no longer matter.
 
 ## 3. Commit and report
 
 1. **Commit.** If `PROJECT.md` names a backup command, run it. Otherwise, if the project is a git repo, add the notes (and any finished work) and commit with a short message. Push only if `PROJECT.md` says the project pushes routinely.
-2. **Report** in a few lines: which project, what was saved, anything failing or unfinished, and how to start next time: "In the new session, run `/resume`" (or `/resume <name>` when the folder holds several projects).
+2. **Report** in a few lines: which project, what was saved (including which topic files got new knowledge), anything failing or unfinished, and how to start next time: "In the new session, run `/resume`" (or `/resume <name>` when the folder holds several projects).
 
 ## Rules
 

@@ -2,7 +2,7 @@
 
 **Juggling several projects with AI coding agents? Stop re-explaining each one every session.**
 
-`multiproject-handoff` is a set of plain-Markdown skills that turn the end of a session into a clean handoff and the start of the next one into a 10-second resume, **across all your projects at once**. It works with Claude Code, Codex, Gemini CLI, Antigravity, Cursor, Copilot, or any agent that can read a file and follow instructions.
+`multiproject-handoff` is a set of plain-Markdown skills that turn the end of a session into a clean handoff and the start of the next one into a 10-second resume, **across all your projects at once**, while each project's notes **grow into a structure you shape**: decisions, research, competitors, interviews, strategy, each in its place. It works with Claude Code, Codex, Gemini CLI, Antigravity, Cursor, Copilot, or any agent that can read a file and follow instructions.
 
 ```
 > resume
@@ -24,7 +24,11 @@ Which one? (number or name)
 ```
 > handoff
   facts checked from git and tests · daily log appended · decision recorded
-  · backlog updated (one item routed to cli-tool) · resume note rewritten · committed
+  · competitor research filed to knowledge/competitors/ · backlog updated (one item routed to cli-tool)
+  · resume note rewritten · committed
+
+  Proposal: knowledge/competitors.md now covers 4 competitors. Split it into a folder
+  with one file each and an overview? (yes / no)
 ```
 
 No server, no database, no account. Markdown files next to your code, and instructions any agent can follow.
@@ -60,6 +64,68 @@ recipe-app/
 | `daily/*.md` | Append-only | Rarely: it's the history |
 
 **The resume note stays tiny because everything else has a home.** Before anything leaves `RESUME.md`, the handoff moves it to the daily log or the decision file. Nothing gets lost, and the next session reads one short file instead of your whole history.
+
+## Notes that grow with your project
+
+A project produces three kinds of information, and each is kept differently:
+
+| Kind | Example | Where it goes |
+|---|---|---|
+| **State** | "search works, remove-item is half done" | `RESUME.md`, rewritten every handoff |
+| **Decisions** | "SQLite instead of Algolia, because…" | decision files, replaced when they change |
+| **Knowledge** | competitor pricing, interview notes, research, strategy | **topic files that grow over time** |
+
+Most tools only carry *state* from one session to the next. Here, knowledge that would otherwise die with the chat is filed into topics, and the structure grows as the project does:
+
+```
+week 1                          month 3
+notes/                          notes/
+├── RESUME.md                   ├── RESUME.md          ← still ≤60 lines
+├── DECISIONS.md                ├── decisions/
+└── BACKLOG.md                  │   ├── product.md
+                                │   └── tech.md
+                                ├── knowledge/
+                                │   ├── competitors/
+                                │   │   ├── _overview.md
+                                │   │   ├── pantrypal.md
+                                │   │   └── cookbase.md
+                                │   ├── interviews/
+                                │   │   └── 2026-11-21-household-1.md
+                                │   └── pricing.md
+                                └── BACKLOG.md
+```
+
+How it grows:
+
+- **A new topic starts as one file.** The first time competitor research shows up, the agent proposes `knowledge/competitors.md` and creates it after your yes.
+- **Big topics become folders.** When a topic passes ~150 lines or covers 4+ separate subjects, the agent proposes splitting it: one file per subject plus an `_overview.md`. Content is moved with `git mv`, every line ends up somewhere, links are fixed.
+- **Decisions split the same way** when `DECISIONS.md` grows clear areas (product, tech, pricing).
+- **Everything is on a map.** Each topic is listed in the `## Knowledge map` of `PROJECT.md`, so any session, in any tool, knows where things are without opening them.
+- **Opening a session stays cheap.** `resume` reads the map, not the topic files. A topic is opened only when the work needs it ("let's set the price" → `pricing.md`).
+- **Say "organize notes"** at any time for a full review: merges, splits, archive candidates, accepted one by one.
+
+Nothing structural happens without your OK. Filing into an existing topic is automatic; new topics, splits, merges and archives are proposals.
+
+## Your structure, your rules
+
+The skills ship with defaults, not opinions you have to accept. Everything about how notes are organized lives in each project's `PROJECT.md`, and every skill follows it:
+
+```markdown
+## Knowledge map
+- Competitors → 02 Research/Competitors/
+- Sales calls → 03 Sales/Calls/
+- Architecture → docs/architecture.md
+
+## Structure rules
+- Number top-level folders: "01 Decisions", "02 Research", "03 Sales"
+- Write notes in Turkish
+- Split a topic into a folder at 100 lines
+- Calls: one file per call, named YYYY-MM-DD-company.md
+```
+
+- **Any names, any language, any location**, including an existing Obsidian vault or `docs/` folder. `setup-project` maps the folders you already have instead of creating new ones.
+- **Different projects, different structures.** A client project, a thesis and a side app can each have their own map and rules; the skills stay the same.
+- **Your structure is never "fixed" to fit a default.** The agent doesn't rename or move your folders unless you ask.
 
 ## Where the files live
 
@@ -123,9 +189,10 @@ Each skill is a standard [`SKILL.md`](https://agentskills.io) file. In tools wit
 |---|---|
 | `setup-project` | Creates `notes/` for a project from its README and git history, asks 3 questions, adds it to `PROJECTS.md` if you keep one. Never overwrites. |
 | `resume [project]` | With several projects: a one-screen dashboard first. Then reads `PROJECT.md`, `RESUME.md` and the backlog's `Now`, warns about commits since the last handoff, answers in ≤8 lines. Read-only. |
-| `handoff [project]` | Finds the right project, checks facts from git and tests (not from memory), appends the daily log, records decisions, routes backlog items to the right project, rewrites the resume note, commits. |
+| `handoff [project]` | Finds the right project, checks facts from git and tests (not from memory), appends the daily log, records decisions, files knowledge, routes backlog items to the right project, rewrites the resume note, commits. |
 | `daily-log` | Today's log without the full handoff. |
-| `decision-log` | Records a decision with its reason, replacing the old one if it changed. |
+| `decision-log` | Records a decision with its reason, replacing the old one if it changed. Proposes splitting decisions by area as they grow. |
+| `knowledge` | Files research, competitors, interviews, strategy… into the right topic. Starts new topics, proposes splits and merges, keeps the knowledge map up to date. "organize notes" reviews the whole structure. |
 | `suggest-skill` | Spots work you repeated by hand in the session and suggests ≤3 new skills, with evidence. Rule of three: the third time becomes a skill. |
 
 ## Install
@@ -157,7 +224,7 @@ Then open a project with your AI tool and say **"setup project"**.
 
 ## Try it in 1 minute
 
-[`examples/workspace/`](examples/workspace/) holds three filled-in projects: exactly what the dashboard above reads. After installing, open your AI tool in that folder and say "resume".
+[`examples/workspace/`](examples/workspace/) holds three filled-in projects: exactly what the dashboard above reads. `recipe-app` shows a grown structure (decisions split by area, competitors split into a folder, interviews, pricing research). After installing, open your AI tool in that folder and say "resume".
 
 ## Safety rules built into every skill
 
@@ -169,12 +236,13 @@ Then open a project with your AI tool and say **"setup project"**.
 
 ## How is this different from other handoff / memory-bank tools?
 
-There are good tools in this space, and some ideas here come from them. Most do one of two things: **one handoff file for one project**, or a **memory bank** of context files for a single project, often tied to one tool. `multiproject-handoff` differs in four ways:
+There are good tools in this space, and some ideas here come from them. Most do one of two things: **one handoff file for one project**, or a **memory bank** of context files for a single project, often tied to one tool. `multiproject-handoff` differs in five ways:
 
-1. **Many projects, one command:** the dashboard, `resume <project>`, stale warnings, a handoff that knows which project it is closing, and backlog items routed to the right project.
-2. **Each kind of information has its own lifecycle,** so the file the next session reads stays under 60 lines after months of work.
-3. **Per-project settings instead of per-project skills:** one `PROJECT.md` changes paths, checks and rules; the skills stay the same everywhere.
-4. **Not tied to one AI tool:** start a project in Claude Code, continue it in Codex or Gemini tomorrow. The notes are the same.
+1. **Notes that grow into a structure:** knowledge is filed into topics that split into folders as they grow, on a map every session can read, in the names and layout you choose.
+2. **Many projects, one command:** the dashboard, `resume <project>`, stale warnings, a handoff that knows which project it is closing, and backlog items routed to the right project.
+3. **Each kind of information has its own lifecycle,** so the file the next session reads stays under 60 lines after months of work.
+4. **Per-project settings instead of per-project skills:** one `PROJECT.md` changes paths, checks and rules; the skills stay the same everywhere.
+5. **Not tied to one AI tool:** start a project in Claude Code, continue it in Codex or Gemini tomorrow. The notes are the same.
 
 ## FAQ
 

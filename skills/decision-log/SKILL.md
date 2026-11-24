@@ -19,6 +19,7 @@ Decisions are the most expensive thing to lose between sessions. A new session t
 3. Write **why** next to every decision, in one sentence.
 4. If the decision closes an open question (in `RESUME.md` or wherever `PROJECT.md` says), mark it there.
 5. If the decision changes planned work, update the backlog.
+6. **Let the decision files grow.** When `DECISIONS.md` has several clear areas (product, tech, pricing…) or passes ~150 lines, propose splitting it into `notes/decisions/<area>.md` with a decisions map in `PROJECT.md`. Follow the `knowledge` skill's restructure steps (move, never delete; fix links; update the map). Only after a yes.
 
 ## Format
 

@@ -21,6 +21,18 @@
 - Everything → `notes/DECISIONS.md`
 - <!-- Bigger projects: e.g. pricing → notes/decisions/pricing.md, architecture → docs/architecture.md -->
 
+## Knowledge map
+<!-- Research, competitors, interviews, strategy… Topics are added here as the project grows
+     (the knowledge skill proposes them; you approve). Any names, any language, any location. -->
+- <!-- e.g. Competitors → notes/knowledge/competitors.md -->
+
+## Structure rules (optional)
+<!-- How you like your notes organized. Every skill follows these. Examples:
+- Number top-level folders: "01 Decisions", "02 Research", "03 Sales"
+- Write notes in Turkish
+- Split a topic into a folder at 100 lines instead of 150
+- Interviews: one file per person, named YYYY-MM-DD-name.md -->
+
 ## Resume note
 - At most ~60 lines. Sections: Where we are · Tried, didn't work · Open questions · Next steps.
 - Mark this project stale on the /resume dashboard after: `14` days
