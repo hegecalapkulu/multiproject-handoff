@@ -55,7 +55,13 @@ Forgot a command? **`mph-menu`** shows them all.
 
 Then start a new session. (Older Claude Code: `/plugin marketplace add hegecalapkulu/multiproject-handoff`, then `/plugin install multiproject-handoff@multiproject-handoff`.)
 
-**Any other tool (Codex, Gemini CLI, Antigravity, Cursor…), or Claude Code without plugins:**
+**Any AI tool: let it install itself.** Paste this into Codex, Cursor, Gemini CLI, Antigravity, Claude Code or any agent that can run commands:
+
+```text
+Install multiproject-handoff (https://github.com/hegecalapkulu/multiproject-handoff) for the AI tool you are running in: clone the repo, run `./install.sh --dry-run` and show me what it would change, then install it for this tool after I say yes. Finally, tell me how to start.
+```
+
+**Or by hand (Codex, Gemini CLI, Antigravity, Cursor…, or Claude Code without plugins):**
 
 ```bash
 git clone https://github.com/hegecalapkulu/multiproject-handoff.git

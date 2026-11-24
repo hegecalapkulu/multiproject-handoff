@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- README and install docs: a ready prompt to paste into any AI tool so it installs multiproject-handoff itself (dry run first, then install after a yes).
+
 ## 0.5.0 (2026-11-24)
 
 - **Setup understands before it asks:** on an existing project, `mph-setup-project` first reads it, says in a few lines what it understood, then asks only what the files left open (at most 5 questions, specific to the project, all skippable). Answers go to a new `## About` section in `PROJECT.md` and into a new resume note. Tested in Claude Code on a small bot project: it found the half-done feature on a side branch and asked whether that branch is still current, what comes next, and whether the bot is live.

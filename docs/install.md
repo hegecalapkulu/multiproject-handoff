@@ -19,6 +19,16 @@ On older versions, two lines:
 
 Start a new session and the 12 `mph-` skills are there (`/mph-resume`, `/mph-handoff`, …). Each skill carries its own copy of the shared rules, so nothing else is needed. The plugin adds no hooks: the safety guard stays off until you run `mph-guard`. To update: `/plugin update multiproject-handoff`.
 
+## Let your AI tool install it
+
+Paste this into any agent that can run commands (Codex, Cursor, Gemini CLI, Antigravity, Claude Code…):
+
+```text
+Install multiproject-handoff (https://github.com/hegecalapkulu/multiproject-handoff) for the AI tool you are running in: clone the repo, run `./install.sh --dry-run` and show me what it would change, then install it for this tool after I say yes. Finally, tell me how to start.
+```
+
+It shows you what would change before installing anything.
+
 ## Install script (every tool)
 
 ```bash
