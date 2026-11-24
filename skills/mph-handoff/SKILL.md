@@ -47,10 +47,10 @@ Only include steps that have material **and** whose module is on (RULES.md §3).
 If a step will need something the user must approve (a new decision file, a new topic), **ask it inside the plan** ("New decision file `01 Kararlar/Gönderim.md`?"), not after the work.
 
 **No git yet? Offer it once, rarely.** If the code folder is not inside a git repo (`mph-scan.py facts` says `not a git repo`), read the `Git:` line under `## Commit / backup` in `PROJECT.md`:
-- no line, or `not now (asked YYYY-MM-DD)` at least 30 days ago → add **one line** to the plan, before `OK?`, in the user's language:
+- no line, or `not now` → add **one line** to the plan, before `OK?`, in the user's language:
   `No backup yet: this folder has no git. Start it? Every handoff then saves a version you can go back to, so a bad change (yours or the AI's) can always be undone. It stays on this computer. (yes / not now / never)`
-- `on`, `never`, or a `not now` less than 30 days old → say nothing about git. Never ask in `quick` mode.
-- If `git` itself is not installed, say so in that line instead ("git is not installed: git-scm.com, then say 'start git'") and record `not now`.
+- `on` or `never` → say nothing about git. Never ask in `quick` mode.
+- If `git` itself is not installed, say so in that line instead ("git is not installed: git-scm.com, then say 'start git'") and record nothing.
 
 The answer goes with the plan's OK. See step 6 for what each answer does. Whenever the user says "start git", do the `yes` path.
 
@@ -86,7 +86,7 @@ Read `notes/SUGGESTIONS.md` and skim the last ~10 daily logs, one line each. If 
 - Commit: the backup command from `PROJECT.md` if there is one; otherwise, in a git repo, add the notes and finished work and commit with a short message (git-ignored files such as local profiles stay out). Push only if `PROJECT.md` says so.
 - **Git offer answers** (only if it was in the plan), recorded under `## Commit / backup` in `PROJECT.md` (add or replace the one `- Git:` line):
   - `yes` → `git init` in the code folder (the notes folder too, if it lies outside it). Before the first commit, append to `.gitignore` (create it if missing, never remove lines): `.env`, `.env.*`, `node_modules/`, and the profile line from setup if the profile is local. List what will be committed; leave out anything that looks like a secret (keys, tokens, `*.pem`) or is over 50 MB, and say what you left out. Commit as `Start version history`. Record `- Git: on (since YYYY-MM-DD)`. Push nothing; putting it on GitHub is a separate step the user starts.
-  - `not now` → record `- Git: not now (asked YYYY-MM-DD)`. On the third `not now`, record `never` instead and say so.
+  - `not now` → record `- Git: not now (asked YYYY-MM-DD)`; the next handoff asks again.
   - `never` → record `- Git: never`. Not asked again; the user can still say "start git".
   - Without git, the notes are still written; the report says "saved, no version history" only on the handoff that asked.
 - Report, starting with `🧭 [project]`: what was saved where, anything failing or unfinished, items sent to other projects, and how to start next time: `mph-resume` (or `mph-resume <name>` in a folder with several projects).

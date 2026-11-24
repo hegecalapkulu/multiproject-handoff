@@ -66,7 +66,7 @@
 
 ## Commit / backup
 - Handoff commits the notes and finished work. Push: `no` <!-- yes / no -->
-- Git: <!-- only when the folder has no git: handoff writes on / not now (asked YYYY-MM-DD) / never -->
+- Git: <!-- only when the folder has no git: handoff writes on / not now (asked again next handoff) / never -->
 
 ## Never
 - <!-- e.g. "never touch the production database", "never edit generated files in dist/" -->
