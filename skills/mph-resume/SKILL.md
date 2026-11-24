@@ -70,3 +70,5 @@ Open questions: <if any>
 Next step: <from the notes>
 Continue with that, or something else?
 ```
+
+**Hard limit: 8 lines, no extra paragraphs.** Each field is one line; drop empty fields. If the health check could not run, add at most one short line saying so. Do not explain which files you read or that the working style was loaded; just apply it.

@@ -42,6 +42,8 @@ OK? (yes, or e.g. "add profile")
 
 Only include steps that have material **and** whose module is on (RULES.md §3). The user's correction wins.
 
+**Keep the plan to at most 4 lines**, in exactly the shape above: no bullet list of every step, no explanations of each item. Details go in the final report, not the plan.
+
 ## 4. Steps (read the linked skill's rules only for the steps that run)
 
 | Step | Runs when | Detailed rules in |
