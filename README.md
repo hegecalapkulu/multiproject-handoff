@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/logo/logo.png" alt="multiproject-handoff logo" width="96"></p>
+<p align="center"><img src="docs/logo/logo.png" alt="multiproject-handoff logo: a thinking meerkat with glasses and a pencil behind its ear" width="96"></p>
 
 <h1 align="center">multiproject-handoff</h1>
 
