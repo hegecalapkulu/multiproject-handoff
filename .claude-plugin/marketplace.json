@@ -1,0 +1,12 @@
+{
+  "name": "multiproject-handoff",
+  "owner": { "name": "hegecalapkulu", "url": "https://github.com/hegecalapkulu" },
+  "plugins": [
+    {
+      "name": "multiproject-handoff",
+      "source": "./",
+      "description": "Pick up any project where you left off: a dashboard for all your projects, clean session handoffs, decision and daily logs, all in plain Markdown next to your code.",
+      "version": "0.4.0"
+    }
+  ]
+}

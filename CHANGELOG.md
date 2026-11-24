@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **One-line install for Claude Code:** the repo is now a Claude Code plugin marketplace. `/plugin install multiproject-handoff --marketplace hegecalapkulu/multiproject-handoff` installs all 12 skills (no hooks; the guard stays opt-in). Tested with a real session: `/mph-resume` showed the example dashboard in 4 steps, about $0.11.
 - **CI:** `scripts/check.sh` runs on every push and pull request (GitHub Actions, Ubuntu and macOS); "tests" badge in the README.
 
 ## 0.4.0 (2026-11-24)

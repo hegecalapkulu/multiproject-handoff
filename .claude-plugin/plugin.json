@@ -1,0 +1,10 @@
+{
+  "name": "multiproject-handoff",
+  "version": "0.4.0",
+  "description": "Pick up any project where you left off: a dashboard for all your projects, clean session handoffs, decision and daily logs, all in plain Markdown next to your code.",
+  "author": { "name": "hegecalapkulu", "url": "https://github.com/hegecalapkulu" },
+  "homepage": "https://github.com/hegecalapkulu/multiproject-handoff",
+  "repository": "https://github.com/hegecalapkulu/multiproject-handoff",
+  "license": "MIT",
+  "keywords": ["handoff", "resume", "notes", "projects", "obsidian", "agent-skills"]
+}

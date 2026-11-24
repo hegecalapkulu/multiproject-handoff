@@ -1,5 +1,5 @@
 #!/bin/sh
-# Sanity checks: skill names, shared rules in sync, relative links, installer.
+# Sanity checks: skill names, shared rules in sync, relative links, installer, plugin manifests.
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"; cd "$ROOT"; fail=0
 for f in skills/*/SKILL.md; do
@@ -36,4 +36,16 @@ for p in examples/workspace/*/; do
   find "$p" -maxdepth 3 -name PROJECT.md -exec head -1 {} \; | grep -q '^<!-- mph:project ' || { echo "example without marked PROJECT.md: $p"; fail=1; }
 done
 head -1 skills/mph-setup-project/templates/PROJECT.md | grep -q '^<!-- mph:project ' || { echo "template PROJECT.md has no marker"; fail=1; }
+python3 - <<'PY2' || fail=1
+import json, re, sys
+p = json.load(open(".claude-plugin/plugin.json")); m = json.load(open(".claude-plugin/marketplace.json"))
+e = [x for x in m["plugins"] if x["name"] == p["name"]]
+badge = re.search(r"badge/version-([0-9.]+)-", open("README.md").read())
+bad = []
+if not e: bad.append("marketplace.json does not list the plugin")
+elif e[0].get("version") != p["version"]: bad.append("plugin.json and marketplace.json versions differ")
+if not badge or badge.group(1) != p["version"]: bad.append("README version badge differs from plugin.json")
+for b in bad: print(b)
+sys.exit(1 if bad else 0)
+PY2
 [ "$fail" -eq 0 ] && echo "all checks passed" || { echo "checks failed"; exit 1; }

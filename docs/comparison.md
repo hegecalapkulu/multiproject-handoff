@@ -10,7 +10,7 @@ There are good tools in this space, and some ideas here come from them. Most do 
 2. **Many projects, one command:** the dashboard, `mph-resume <project>`, stale warnings, a handoff that knows which project it is closing, and backlog items routed to the right project.
 3. **Each kind of information has its own lifecycle,** so the file the next session reads stays under 60 lines after months of work.
 4. **Per-project settings instead of per-project skills:** one `PROJECT.md` changes paths, checks and rules; the skills stay the same everywhere.
-5. **Not tied to one AI tool:** start a project in Claude Code, continue it in Codex or Gemini tomorrow. The notes are the same.
+5. **Not tied to one AI tool:** start a project in Claude Code, continue it in Codex or Gemini tomorrow. The notes are the same. Work in one tool at a time on a project: the tools don't know about each other, so two agents updating the same note at the same moment can overwrite each other. Finish with `mph-handoff` in one, then `mph-resume` in the other.
 
 ## FAQ
 

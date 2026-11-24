@@ -44,6 +44,16 @@ Forgot a command? **`mph-menu`** shows them all.
 
 ## Quick start
 
+**Claude Code: one line.** Type this inside Claude Code:
+
+```
+/plugin install multiproject-handoff --marketplace hegecalapkulu/multiproject-handoff
+```
+
+Then start a new session. (Older Claude Code: `/plugin marketplace add hegecalapkulu/multiproject-handoff`, then `/plugin install multiproject-handoff@multiproject-handoff`.)
+
+**Any other tool (Codex, Gemini CLI, Antigravity, Cursor…), or Claude Code without plugins:**
+
 ```bash
 git clone https://github.com/hegecalapkulu/multiproject-handoff.git
 cd multiproject-handoff
@@ -57,6 +67,8 @@ cd multiproject-handoff
 ## How it works
 
 You open your agent and type `mph-resume`. It looks for projects, reads only the first lines of each project's resume note, and shows the dashboard. You pick one. Now it reads that project's short resume note, the top of its backlog and your working-style notes, and tells you in a few lines where things stand and what's next. That project stays active for the whole session; no skill asks again.
+
+**Using more than one AI tool?** The notes are plain files, so Claude Code, Codex, Cursor and the others all read the same ones: hand off in one, resume in another. Use them **one at a time** on a project; they don't know about each other, so two agents writing the same note at once can overwrite each other.
 
 You work. When you choose something ("let's use SQLite, not a search service"), `mph-decision-log` writes it down with the reason. When you research competitors or talk to a customer, `mph-knowledge` files it under a topic. Mention a fix that belongs to another project, and it lands in *that* project's backlog.
 

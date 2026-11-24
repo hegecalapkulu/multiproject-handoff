@@ -20,7 +20,7 @@ It works in **Claude Code** (hooks in `~/.claude/settings.json`). Other tools ha
 
 ## 1. Look first
 
-- Is `~/.handoff/mph-guard.py` there? (The installer puts it there; if missing, copy it from the repo's `guard/` folder after saying so.)
+- Is `~/.handoff/mph-guard.py` there? (The installer puts it there; if missing, copy it after saying so from the `guard/` folder two levels above this skill's folder (`../../guard/`, where it is when installed as a Claude Code plugin) or from the repo's `guard/` folder. Copy `mph-context.py` from the same place if it is missing too.)
 - Read `~/.handoff/guard.conf` if it exists: these are the user's current choices.
 - Read the `hooks` section of `~/.claude/settings.json` (read-only for now). If another safety hook is already registered (any `PreToolUse` hook), **say which one** and ask whether to add the guard next to it or leave it. Never remove or change someone else's hook.
 - Read the active project's `## Never` list: lines that name a folder or file can become protected paths.

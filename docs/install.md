@@ -2,6 +2,25 @@
 
 [← back to README](../README.md)
 
+## Claude Code plugin (one line)
+
+Type this inside Claude Code (version 2.1.275 or later):
+
+```
+/plugin install multiproject-handoff --marketplace hegecalapkulu/multiproject-handoff
+```
+
+On older versions, two lines:
+
+```
+/plugin marketplace add hegecalapkulu/multiproject-handoff
+/plugin install multiproject-handoff@multiproject-handoff
+```
+
+Start a new session and the 12 `mph-` skills are there (`/mph-resume`, `/mph-handoff`, …). Each skill carries its own copy of the shared rules, so nothing else is needed. The plugin adds no hooks: the safety guard stays off until you run `mph-guard`. To update: `/plugin update multiproject-handoff`.
+
+## Install script (every tool)
+
 ```bash
 git clone https://github.com/hegecalapkulu/multiproject-handoff.git
 cd multiproject-handoff
