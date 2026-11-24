@@ -67,13 +67,14 @@ A few choices (Enter keeps the default):
 OK?
 ```
 
+- **In adopt / adopt many, propose `obsidian` off** even inside a vault, and say why in a few words: it adds a header block and links to many existing notes. The user can switch it on later.
 - **Only ask what you could not work out.** If there is no Obsidian vault, do not mention Obsidian. If the guard is already set up on this machine, skip question 5.
 - In **adopt many**, show one compact block per project (found notes + proposal) and let the user accept all, or skip or change single projects.
 - The user can correct any line ("decisions are in `01 Kararlar/`").
 
 ## 4. Write (after OK)
 
-1. **`PROJECT.md`** in the notes folder, from `templates/PROJECT.md`. **First line: `<!-- mph:project <name> -->`.** Fill `## Paths` with the adopted files (paths relative to the notes folder, e.g. `../TODO.md`), `## Modules`, check command, push, "Never" list, and the existing folders as decision and knowledge maps.
+1. **`PROJECT.md`** in the notes folder, from `templates/PROJECT.md`. **First line: `<!-- mph:project <name> -->`.** If the project already has a settings note for other skills (for example a "project settings" note with a decision map, report rules or a backup command), add a line `- Also follow: <path to it>` at the top of `PROJECT.md`, and copy nothing from it: its rules then apply to every mph skill too. Fill `## Paths` with the adopted files (paths relative to the notes folder, e.g. `../TODO.md`), `## Modules`, check command, push, "Never" list, and the existing folders as decision and knowledge maps.
 2. **Only the files that do not exist yet**, from `templates/`: a resume note if none was adopted (filled from what you learned; "Next steps" left for the user), backlog, decisions, `daily/_template.md`. Never overwrite or move an existing file.
 3. **Adopted files keep their format.** Skills write into them following the style they already have (headings, language, numbering), and add only what they need.
 4. **Profile:** unless the user chose to share it, append `<notes folder>/working-style*.md` to the project's `.gitignore` (append only; create the file if missing).

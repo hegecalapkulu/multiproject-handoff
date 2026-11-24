@@ -44,6 +44,10 @@ Only include steps that have material **and** whose module is on (RULES.md §3).
 
 **Keep the plan to at most 4 lines**, in exactly the shape above: no bullet list of every step, no explanations of each item. Details go in the final report, not the plan.
 
+If a step will need something the user must approve (a new decision file, a new topic), **ask it inside the plan** ("New decision file `01 Kararlar/Gönderim.md`?"), not after the work.
+
+**Do exactly the confirmed plan.** If something new comes up while writing, put it in the report as a suggestion; do not act on it.
+
 ## 4. Steps (read the linked skill's rules only for the steps that run)
 
 | Step | Runs when | Detailed rules in |

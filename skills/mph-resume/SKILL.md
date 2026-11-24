@@ -42,7 +42,7 @@ For each project read **only**: the marker line and the `## Paths` table of its 
 Which one? (number or name)
 ```
 
-- One line of state, one line of "Now".
+- One line of state, one line of "Now". **All labels in the user's language** ("Şimdi:", "güncellendi", "Hangisi?"); the shape above is only an example.
 - **⚠ stale** when the note is older than 14 days (or the number in that project's `PROJECT.md`).
 - No "Last updated" line → "date unknown".
 
@@ -71,4 +71,4 @@ Next step: <from the notes>
 Continue with that, or something else?
 ```
 
-**Hard limit: 8 lines, no extra paragraphs.** Each field is one line; drop empty fields. If the health check could not run, add at most one short line saying so. Do not explain which files you read or that the working style was loaded; just apply it.
+(Labels in the user's language.) **Hard limit: 8 lines, no extra paragraphs.** Each field is one line; drop empty fields. If the health check could not run, add at most one short line saying so. Do not explain which files you read or that the working style was loaded; just apply it.

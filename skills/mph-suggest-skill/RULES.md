@@ -51,7 +51,9 @@ Read `notes/PROJECT.md` of the active project before writing anything. Paths, ch
 - obsidian: off      # links, tags and map notes for Obsidian
 ```
 
-A missing line means the default above. A user can still call a module skill by name when it is off; it then works once without switching itself on.
+A missing line means the default above.
+
+**The user's own rules count as their yes.** If `PROJECT.md` (or a settings note it points to with `Also follow:`) already says how to handle a case, for example "if no decision file fits, open a new one in `01 Decisions/`", follow it without asking again. A user can still call a module skill by name when it is off; it then works once without switching itself on.
 
 ## 4. Reports
 
