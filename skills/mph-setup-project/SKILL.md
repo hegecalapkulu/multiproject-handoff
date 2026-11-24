@@ -39,7 +39,7 @@ Confirm the folder and the mode in one sentence before anything else.
   - logs: daily/weekly report folders, `CHANGELOG.md` (only as a source, never as the daily log);
   - knowledge: `docs/`, `research/`, meeting/interview notes, numbered folders like `02 Research/`;
   - settings that other skills use (a "project settings" note, `AGENTS.md`, `CLAUDE.md`): read, never change.
-- **Obsidian:** a `.obsidian/` folder in or above it means a vault.
+- **Obsidian:** a `.obsidian/` folder in the working folder, the project or any parent folder means a vault. Hidden folders are skipped by many search tools, so check with `ls -a` on each of those folders.
 - **Name clashes:** if a `notes/` folder or a `PROJECT.md` already exists **without** the marker, it is the user's. Do not write into it; choose another notes folder (`.mph/` by default, or what the user prefers).
 
 ## 3. Show one screen

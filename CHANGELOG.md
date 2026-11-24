@@ -7,7 +7,8 @@
 - **One-screen setup** with defaults; asks only what it can't work out.
 - **`mph-guard`**: optional Claude Code hook that enforces the safety rules (blocks deleting, history rewrites, reading secrets; asks before commands you name; protected folders), configured in `~/.handoff/guard.conf`. Tests in `scripts/test-guard.py`.
 - Example: `landing-page` is now an adopted project with its own `notes/` folder left alone.
-- First real-session test (Claude Code): `mph-resume` and `mph-handoff` answers kept within their length limits.
+- Answers use the user's language, headings included.
+- Real-session tests (Claude Code): dashboard, resume, handoff, and adopting an existing project with its own `notes/` folder left untouched.
 
 ## 0.1.0 (2026-11-24)
 

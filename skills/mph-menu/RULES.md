@@ -57,6 +57,7 @@ A missing line means the default above. A user can still call a module skill by 
 
 - Every skill that writes notes starts its report with **`🧭 [project-name]`**, for example `🧭 [recipe-app] decision recorded`. A wrong project is then visible at once.
 - Keep reports short: what changed, where, and anything unfinished or failing.
+- **Write in the user's language**: the language they write to you in (or, if unclear, the language of the project's notes), including headings and labels such as "Where we are". Keep file and command names as they are.
 
 ## 5. Safety (never broken, in any mode)
 
