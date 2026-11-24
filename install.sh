@@ -11,7 +11,8 @@
 #   ./install.sh --dry-run           show what would happen, change nothing
 set -e
 
-SRC="$(cd "$(dirname "$0")" && pwd)/skills"
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+SRC="$ROOT/skills"
 MARK=".multiproject-handoff"
 TOOL=""; DIR=""; PROJECT=""; AGENTS_DIR=""; UPDATE=0; DRY=0
 
@@ -89,16 +90,27 @@ add_agents_block() { # $1 = folder that gets AGENTS.md
     echo "This workspace keeps per-project notes in \`<project>/notes/\`. When the user says one of the"
     echo "words below, read the matching file and follow it step by step:"
     echo
-    echo "- \"resume\" / \"where were we\" → \`$HOME/.handoff/skills/resume/SKILL.md\`"
-    echo "- \"handoff\" / \"wrap up\" → \`$HOME/.handoff/skills/handoff/SKILL.md\`"
-    echo "- \"daily log\" → \`$HOME/.handoff/skills/daily-log/SKILL.md\`"
-    echo "- a decision is made → \`$HOME/.handoff/skills/decision-log/SKILL.md\`"
-    echo "- \"setup project\" → \`$HOME/.handoff/skills/setup-project/SKILL.md\`"
-    echo "- \"suggest skill\" → \`$HOME/.handoff/skills/suggest-skill/SKILL.md\`"
+    echo "- \"resume\" / \"where were we\" → \`$HOME/.handoff/skills/mph-resume/SKILL.md\`"
+    echo "- \"handoff\" / \"wrap up\" → \`$HOME/.handoff/skills/mph-handoff/SKILL.md\`"
+    echo "- \"daily log\" → \`$HOME/.handoff/skills/mph-daily-log/SKILL.md\`"
+    echo "- a decision is made → \`$HOME/.handoff/skills/mph-decision-log/SKILL.md\`"
+    echo "- \"setup project\" → \`$HOME/.handoff/skills/mph-setup-project/SKILL.md\`"
+    echo "- \"suggest skill\" → \`$HOME/.handoff/skills/mph-suggest-skill/SKILL.md\`"
+    echo "- \"menu\" → \`$HOME/.handoff/skills/mph-menu/SKILL.md\` (lists all the others)"
     echo
-    echo "Never delete files or rewrite git history while doing this."
+    echo "Before any of them, read \`$HOME/.handoff/RULES.md\`. Never delete files or rewrite git history."
     echo "<!-- multiproject-handoff:end -->"
   } >> "$file"
+}
+
+place_rules() { # shared rules at the known address ~/.handoff/RULES.md
+  rules="$HOME/.handoff/RULES.md"
+  if [ -f "$rules" ] && ! head -1 "$rules" | grep -q "multiproject-handoff RULES"; then
+    echo "→ $rules exists and is not ours: left unchanged"; return
+  fi
+  echo "→ shared rules: $rules"
+  [ "$DRY" -eq 1 ] && return
+  mkdir -p "$HOME/.handoff"; cp "$ROOT/shared/RULES.md" "$rules"
 }
 
 if [ -n "$AGENTS_DIR" ]; then
@@ -122,7 +134,8 @@ else
   fi
 fi
 
+place_rules
 echo
 [ "$DRY" -eq 1 ] && echo "(dry run: nothing was changed)"
 echo "$installed installed, $skipped skipped."
-echo "Next: open a project with your AI tool and say \"setup project\" (or /setup-project)."
+echo "Next: open a project with your AI tool and run /mph-setup-project (or just say \"set up this project\")."

@@ -1,13 +1,19 @@
-# multiproject-handoff
+<h1 align="center">🧭 multiproject-handoff</h1>
 
-**Juggling several projects with AI coding agents? Stop re-explaining each one every session.**
+<p align="center"><b>Pick up any project where you left off, with any AI coding agent.</b><br>
+One dashboard for all your projects. Notes that grow with each project. An agent that learns how you work.</p>
 
-`multiproject-handoff` is a set of plain-Markdown skills that turn the end of a session into a clean handoff and the start of the next one into a 10-second resume, **across all your projects at once**, while each project's notes **grow into a structure you shape**: decisions, research, competitors, interviews, strategy, each in its place. It works with Claude Code, Codex, Gemini CLI, Antigravity, Cursor, Copilot, or any agent that can read a file and follow instructions.
+<p align="center">
+<img src="https://img.shields.io/badge/version-0.1.0-blue" alt="version 0.1.0">
+<img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
+<img src="https://img.shields.io/badge/format-Agent%20Skills%20(SKILL.md)-orange" alt="Agent Skills">
+<img src="https://img.shields.io/badge/works%20with-Claude%20Code%20·%20Codex%20·%20Gemini%20·%20Cursor%20·%20Copilot-lightgrey" alt="works with">
+</p>
 
 ```
-> resume
+> /mph-resume
 
-You have 3 projects with notes:
+🧭 3 projects
 
 1. recipe-app      updated 1 day ago
    Search works, 41 tests pass; shopping list half done. Now: finish "remove item".
@@ -19,308 +25,132 @@ You have 3 projects with notes:
 Which one? (number or name)
 ```
 
-…work…
+`multiproject-handoff` is a set of plain-Markdown [Agent Skills](https://agentskills.io) that end every AI coding session with a clean handoff and start the next one from a short note instead of from scratch, **across all your projects**. No server, no database, no account: just Markdown files next to your code.
 
-```
-> handoff
-  facts checked from git and tests · daily log appended · decision recorded
-  · competitor research filed to knowledge/competitors/ · backlog updated (one item routed to cli-tool)
-  · resume note rewritten · committed
+## What do you need?
 
-  Proposal: knowledge/competitors.md now covers 4 competitors. Split it into a folder
-  with one file each and an overview? (yes / no)
-```
-
-No server, no database, no account. Markdown files next to your code, and instructions any agent can follow.
-
----
-
-## The problem
-
-Sessions end, get compacted, or you switch tools. The next session starts cold, so you either paste the same background again, let the agent re-read half the codebase, or watch it **undo a decision** you made last week because it doesn't know *why* you made it.
-
-It gets worse with several projects: which one was blocked, which one did you forget, where did that idea for the other project go?
-
-## How it works
-
-Each project gets a small `notes/` folder. Each file has one job and its own lifecycle:
-
-```
-recipe-app/
-└── notes/
-    ├── PROJECT.md      settings for this project: check command, paths, push or not, "never do X"
-    ├── RESUME.md       ≤60 lines: where we are · tried, didn't work · open questions · next steps
-    ├── BACKLOG.md      open work only (Now / Next / Later)
-    ├── DECISIONS.md    every decision + date + one-sentence "why"
-    └── daily/
-        └── 2026-11-23.md   append-only log of what happened
-```
-
-| File | Changes how | Read when |
+| You want to… | Use | You get |
 |---|---|---|
-| `RESUME.md` | Rewritten short at every handoff | Every resume (the first line feeds the dashboard) |
-| `BACKLOG.md` | Finished items leave, new ones arrive | Only the `Now` section |
-| `DECISIONS.md` | A changed decision replaces the old one, with "(previously: …)" | When a decision matters |
-| `daily/*.md` | Append-only | Rarely: it's the history |
+| Continue where you stopped, without re-explaining | `mph-resume` · `mph-handoff` | a ≤8-line status and the next step |
+| Juggle several projects | the `mph-resume` dashboard | every project on one screen, forgotten ones flagged ⚠ |
+| Keep decisions and research instead of losing them in chat | `mph-decision-log` · `mph-knowledge` | notes that grow into folders as the project grows ([more](docs/knowledge.md)) |
+| Have the agent work your way, project by project | `mph-profile` | short, evidence-based working-style notes, local by default ([more](docs/profile.md)) |
+| Let the system extend itself | `mph-suggest-skill` · `mph-suggest-agent` | project skills and helper agents, suggested once, answers remembered ([more](docs/suggestions.md)) |
+| See it all as a graph | `mph-obsidian-map` | linked notes, map notes and a Canvas in Obsidian ([more](docs/obsidian.md)) |
 
-**The resume note stays tiny because everything else has a home.** Before anything leaves `RESUME.md`, the handoff moves it to the daily log or the decision file. Nothing gets lost, and the next session reads one short file instead of your whole history.
+Forgot a command? **`mph-menu`** shows them all.
 
-## Notes that grow with your project
-
-A project produces three kinds of information, and each is kept differently:
-
-| Kind | Example | Where it goes |
-|---|---|---|
-| **State** | "search works, remove-item is half done" | `RESUME.md`, rewritten every handoff |
-| **Decisions** | "SQLite instead of Algolia, because…" | decision files, replaced when they change |
-| **Knowledge** | competitor pricing, interview notes, research, strategy | **topic files that grow over time** |
-
-Most tools only carry *state* from one session to the next. Here, knowledge that would otherwise die with the chat is filed into topics, and the structure grows as the project does:
-
-```
-week 1                          month 3
-notes/                          notes/
-├── RESUME.md                   ├── RESUME.md          ← still ≤60 lines
-├── DECISIONS.md                ├── decisions/
-└── BACKLOG.md                  │   ├── product.md
-                                │   └── tech.md
-                                ├── knowledge/
-                                │   ├── competitors/
-                                │   │   ├── _overview.md
-                                │   │   ├── pantrypal.md
-                                │   │   └── cookbase.md
-                                │   ├── interviews/
-                                │   │   └── 2026-11-21-household-1.md
-                                │   └── pricing.md
-                                └── BACKLOG.md
-```
-
-How it grows:
-
-- **A new topic starts as one file.** The first time competitor research shows up, the agent proposes `knowledge/competitors.md` and creates it after your yes.
-- **Big topics become folders.** When a topic passes ~150 lines or covers 4+ separate subjects, the agent proposes splitting it: one file per subject plus an `_overview.md`. Content is moved with `git mv`, every line ends up somewhere, links are fixed.
-- **Decisions split the same way** when `DECISIONS.md` grows clear areas (product, tech, pricing).
-- **Everything is on a map.** Each topic is listed in the `## Knowledge map` of `PROJECT.md`, so any session, in any tool, knows where things are without opening them.
-- **Opening a session stays cheap.** `resume` reads the map, not the topic files. A topic is opened only when the work needs it ("let's set the price" → `pricing.md`).
-- **Say "organize notes"** at any time for a full review: merges, splits, archive candidates, accepted one by one.
-
-Nothing structural happens without your OK. Filing into an existing topic is automatic; new topics, splits, merges and archives are proposals.
-
-## Your structure, your rules
-
-The skills ship with defaults, not opinions you have to accept. Everything about how notes are organized lives in each project's `PROJECT.md`, and every skill follows it:
-
-```markdown
-## Knowledge map
-- Competitors → 02 Research/Competitors/
-- Sales calls → 03 Sales/Calls/
-- Architecture → docs/architecture.md
-
-## Structure rules
-- Number top-level folders: "01 Decisions", "02 Research", "03 Sales"
-- Write notes in Turkish
-- Split a topic into a folder at 100 lines
-- Calls: one file per call, named YYYY-MM-DD-company.md
-```
-
-- **Any names, any language, any location**, including an existing Obsidian vault or `docs/` folder. `setup-project` maps the folders you already have instead of creating new ones.
-- **Different projects, different structures.** A client project, a thesis and a side app can each have their own map and rules; the skills stay the same.
-- **Your structure is never "fixed" to fit a default.** The agent doesn't rename or move your folders unless you ask.
-
-## It learns your habits, and remembers your answers
-
-As a project grows, the same manual work keeps coming back: writing release notes, rebuilding test data, reading a 2,000-line test log to find two failures. The system notices, suggests turning it into a project skill or a helper agent, and **remembers what you said**:
-
-```
-> handoff
-  [recipe-app] … committed.
-  I noticed you rebuilt the test data by hand in 3 of the last 5 sessions.
-  Want a skill for it? (yes / no / never / later)
-```
-
-- **`suggest-skill`** turns repeated manual work into a project-specific skill. Session mode looks at this chat; project mode reviews the last ~10 daily logs and the project's README/scripts.
-- **`suggest-agent`** proposes an optional **helper agent** for heavy, noisy work (big logs, browser checks, data audits) that returns only the findings, so the main session stays small. Created as a real subagent where the tool supports it (Claude Code: `.claude/agents/`), or as a skill elsewhere.
-- **Every answer is stored** in `notes/SUGGESTIONS.md`: `yes` creates it, `never` is never asked again, `no` comes back only if the evidence at least doubles ("you declined this when it was 3 times; it's 7 now"), `later` returns after a few sessions.
-- **No nagging:** at most one short question per handoff, never the same idea twice in a session, and `Suggestions: off` in `PROJECT.md` turns it off.
-- Created skills and agents are listed in `PROJECT.md`, so every tool, and `menu`, knows they exist.
-
-## It learns how you work, and shows you what it learned
-
-The agent knows your code, but relearns **how to work with you** every session. `profile` keeps that in two short files you can read and edit:
-
-| Layer | What goes there | Where |
-|---|---|---|
-| **Project profile** | How you work *in this project*: your knowledge of this domain, how much explanation you want, fast or careful, what you decide and what you leave to the agent | `notes/working-style.md` |
-| **General profile** | What's the same everywhere: language, tone, answer format, approval habits | `~/.handoff/working-style.md` |
-
-Because expertise belongs to a domain, not a person: you may want every step explained in a project where you're learning, and no explanations at all in one where you're the expert.
-
-- **Project first.** A new observation goes to the project profile.
-- **Promoted at two projects.** When the same item shows up in two projects, it moves to the general profile.
-- **The project wins** when it differs from the general profile.
-- **It changes as you do:** "explained step by step at first; since December prefers to move fast."
-- **Working style only, never personality.** Only what you said or clearly did, with evidence and a date. No guesses, nothing about health, mood or private life.
-- **Transparent:** every change is announced (`[profile] added (recipe-app): …`); say "profile" to see it, "remove that" to fix it.
-- **Local by default:** `setup-project` git-ignores the profile, so it never reaches GitHub. You can choose to commit it.
-
-See [`examples/home/.handoff/working-style.md`](examples/home/.handoff/working-style.md) and the project profiles in [`examples/workspace/`](examples/workspace/).
-
-## Works as a map in Obsidian
-
-Keep your projects in an Obsidian vault and turn on `Obsidian: on` in `PROJECT.md`. At each handoff, `obsidian-map`:
-
-- **links related notes**: a decision to the research behind it, a competitor to the decision it caused, a daily log to what it changed, so the graph shows real relations instead of loose dots;
-- **adds frontmatter tags** (`project/…`, `type/decision`, `type/knowledge`…) so you can color the graph by project or by note type;
-- **keeps a map note per project** (`notes/_map.md`) and **one for all projects** (`PROJECTS-MAP.md`), the center of the graph;
-- **draws a Canvas** (`notes/map.canvas`) of the project on request, or at every handoff with `Canvas: on`.
-
-Links are standard Markdown by default, so they also work on GitHub; switch to `[[wikilinks]]` if you prefer. It never moves notes and never touches your `.obsidian/` settings.
-
-## One question per session, not per command
-
-Once a project is chosen (by `resume`, by the first skill that needs it, or by saying "let's work on cli-tool"), it is the session's **active project**. Every skill uses it without asking again, and every report starts with `[recipe-app]` so a wrong project is obvious. It changes only when you say "switch to landing-page" or `resume landing-page`.
-
-Forgot the commands? Say **`menu`**: every skill on one screen, the active project, this project's own skills and agents, and the most useful next step.
-
-## Where the files live
-
-The notes always live in a `notes/` folder **inside each project**, so they are versioned with the code. How you arrange the projects is up to you. Pick one of three layouts:
-
-**1. One parent folder (simplest).** All projects under one folder. Open your AI tool there; `resume` finds every `*/notes/RESUME.md` up to two levels deep.
-
-```
-~/code/
-├── recipe-app/notes/
-├── landing-page/notes/
-└── clients/acme/cli-tool/notes/
-```
-
-**2. Projects scattered around the disk.** Put a `PROJECTS.md` in the folder where you open your AI tool, or in `~/.handoff/PROJECTS.md` to use it everywhere:
-
-```markdown
-- recipe-app: ~/code/recipe-app
-- landing-page: ~/clients/acme/landing-page
-- thesis: ~/Documents/thesis
-```
-
-**3. Notes apart from the code** (for example an Obsidian vault for notes, repos elsewhere). Keep `notes/` in the vault and point to the code from `PROJECT.md`:
-
-```markdown
-| Code | `~/code/recipe-app` |
-```
-
-Checks and git commands then run in the code folder; notes stay in the vault.
-
-## Does it split work into projects automatically?
-
-It keeps work **separated** by project automatically. It does not invent projects on its own.
-
-- **Notes go to the right project.** At handoff, the agent works out which project the session was about from the files it touched, confirms in one sentence, and writes only into that project's notes. If the session touched two projects, it asks whether to hand off both, each into its own notes.
-- **Ideas go to the project they belong to.** If, while working on `recipe-app`, you say "the CLI needs the same fix", that item goes into **`cli-tool`'s** backlog, not recipe-app's, and the report tells you.
-- **New work is caught.** If the session worked in a folder that has no notes yet, handoff asks: new project (`setup project`) or part of an existing one?
-- **Forgotten work is flagged.** Projects untouched for 14 days show as **⚠ stale** on the dashboard.
-
-What it won't do: break a big idea into several projects for you, or create a project without asking. You decide what a project is; it keeps them apart.
-
-## Where decisions are stored
-
-By default in each project's `notes/DECISIONS.md`:
-
-```markdown
-## Tech
-- **SQLite full-text search instead of a search service** (2026-11-20). Why: one file, no extra server, fast enough for <100k recipes. (previously: Algolia)
-```
-
-- Every decision has a date and a one-sentence **why**, so a later session won't "helpfully" undo it.
-- A changed decision **replaces** the old one and keeps "(previously: …)". Full history is in git.
-- A suggestion is not a decision: it's only written after you agree.
-- Bigger projects can split decisions by topic with a map in `PROJECT.md` (`pricing → notes/decisions/pricing.md`, `architecture → docs/architecture.md`).
-
-## The skills
-
-Each skill is a standard [`SKILL.md`](https://agentskills.io) file. In tools with slash commands, type `/resume`; elsewhere, just say "resume".
-
-| Skill | What it does |
-|---|---|
-| `setup-project` | Creates `notes/` for a project from its README and git history, asks 3 questions, adds it to `PROJECTS.md` if you keep one. Never overwrites. |
-| `resume [project]` | With several projects: a one-screen dashboard first. Then reads `PROJECT.md`, `RESUME.md` and the backlog's `Now`, warns about commits since the last handoff, answers in ≤8 lines. Read-only. |
-| `handoff [project]` | Finds the right project, checks facts from git and tests (not from memory), appends the daily log, records decisions, files knowledge, routes backlog items to the right project, rewrites the resume note, commits. |
-| `daily-log` | Today's log without the full handoff. |
-| `decision-log` | Records a decision with its reason, replacing the old one if it changed. Proposes splitting decisions by area as they grow. |
-| `knowledge` | Files research, competitors, interviews, strategy… into the right topic. Starts new topics, proposes splits and merges, keeps the knowledge map up to date. "organize notes" reviews the whole structure. |
-| `suggest-skill` | Finds work you repeat by hand (this session, or the project's history) and suggests ≤3 project skills with evidence. Remembers your answers. |
-| `suggest-agent` | Suggests an optional helper agent for heavy, noisy work that returns only findings. Remembers your answers. |
-| `profile` | Short, evidence-based notes on how you like to work: per project first, general once seen in two projects. Local by default. |
-| `obsidian-map` | Links related notes, adds tags, keeps map notes and an optional Canvas, so the notes form a real graph in Obsidian. |
-| `menu` | Every skill on one screen, plus the active project, its own skills and agents, and the next useful step. |
-
-## Install
+## Quick start
 
 ```bash
 git clone https://github.com/hegecalapkulu/multiproject-handoff.git
 cd multiproject-handoff
-./install.sh            # installs for every AI tool it finds on this machine
+./install.sh        # finds the AI tools on this machine and installs for each
 ```
 
-Or choose:
+**Try it in one minute:** open your AI tool in [`examples/workspace/`](examples/workspace/) (three filled-in projects) and run `/mph-resume`.
 
-| You use | Command | Installs to |
-|---|---|---|
-| Claude Code | `./install.sh --tool claude` | `~/.claude/skills/` |
-| Codex | `./install.sh --tool codex` | `~/.codex/skills/` |
-| Tools using the shared `.agents` folder | `./install.sh --tool agents` | `~/.agents/skills/` |
-| Gemini CLI | `./install.sh --tool gemini` | `~/.gemini/skills/` |
-| Antigravity | `./install.sh --tool antigravity` | `~/.gemini/antigravity/skills/` |
-| Any other skills folder | `./install.sh --dir PATH` | `PATH` |
-| One project only | `./install.sh --project ~/code/app [--tool claude]` | `app/.agents/skills/` (or the tool's project folder) |
-| A tool without skill support (Cursor, Copilot, Windsurf…) | `./install.sh --agents-md ~/code` | skills to `~/.handoff/skills/` + a short block in `~/code/AGENTS.md` that tells the agent which file to follow for "resume", "handoff", … |
+**Use it on your project:** open the project and run `/mph-setup-project`. From then on: `/mph-resume` to start a session, `/mph-handoff` to end one. In tools without slash commands, just say "resume" or "handoff".
 
-Skill folders differ between tools and change between versions. If your tool doesn't see the skills, check its docs and use `--dir`. `--dry-run` shows what would happen without changing anything.
+## How it works
 
-The installer **never deletes anything**, skips any existing skill with the same name, appends to `AGENTS.md` only once (never overwrites it), and `--update` refreshes only what it installed itself.
+You open your agent and type `mph-resume`. It looks for projects, reads only the first lines of each project's resume note, and shows the dashboard. You pick one. Now it reads that project's short resume note, the top of its backlog and your working-style notes, and tells you in a few lines where things stand and what's next. That project stays active for the whole session; no skill asks again.
 
-Then open a project with your AI tool and say **"setup project"**.
+You work. When you choose something ("let's use SQLite, not a search service"), `mph-decision-log` writes it down with the reason. When you research competitors or talk to a customer, `mph-knowledge` files it under a topic. Mention a fix that belongs to another project, and it lands in *that* project's backlog.
 
-## Try it in 1 minute
+When you stop, you type `mph-handoff`. It checks what really happened from git and the tests, not from memory, and shows one line: *will do: log · decision · knowledge · resume note · commit; skip: profile (nothing new)*. You press Enter. It writes only what this session produced, rewrites the resume note short, and commits. Leaving in a hurry? `mph-handoff quick` saves just the resume note.
 
-[`examples/workspace/`](examples/workspace/) holds three filled-in projects: exactly what the dashboard above reads. `recipe-app` shows a grown structure (decisions split by area, competitors split into a folder, interviews, pricing research). After installing, open your AI tool in that folder and say "resume".
+Over weeks, the notes grow: a competitors file becomes a folder, decisions split by area, and if you keep doing the same chore by hand, the handoff asks once whether you want a skill for it, and remembers your answer. [Full walkthrough →](docs/how-it-works.md)
 
-## Safety rules built into every skill
+## What's in a project
 
-- **Never delete files.** Notes are edited or appended. Old versions live in git.
-- **Never rewrite git history.** No force push, no reset. A failed push is reported, not "fixed".
-- **Never claim work that didn't happen.** "Tests pass" is only written if they passed during the handoff.
-- **You decide.** The agent's suggestion is not a decision until you agree.
-- **No secrets in notes.** No keys, passwords or real customer data.
+```
+recipe-app/notes/
+├── PROJECT.md          your settings: checks, modules, maps, structure rules
+├── RESUME.md           ≤60 lines: where we are · tried, didn't work · open questions · next
+├── BACKLOG.md          open work only
+├── decisions/          every decision + date + why
+├── knowledge/          research, competitors, interviews… grows into folders
+├── daily/              append-only log
+└── working-style.md    how you like to work here (git-ignored by default)
+```
 
-## How is this different from other handoff / memory-bank tools?
+**Your structure, your rules.** Everything about how notes are organized lives in `PROJECT.md`: folder names, language, numbering, where things go, which modules are on. Every skill follows it, so a client project, a thesis and a side app can each look the way you want with the same skills. [More →](docs/knowledge.md#your-structure-your-rules)
 
-There are good tools in this space, and some ideas here come from them. Most do one of two things: **one handoff file for one project**, or a **memory bank** of context files for a single project, often tied to one tool. `multiproject-handoff` differs in five ways:
+## Skills
 
-1. **Notes that grow into a structure:** knowledge is filed into topics that split into folders as they grow, on a map every session can read, in the names and layout you choose.
-2. **Many projects, one command:** the dashboard, `resume <project>`, stale warnings, a handoff that knows which project it is closing, and backlog items routed to the right project.
-3. **Each kind of information has its own lifecycle,** so the file the next session reads stays under 60 lines after months of work.
-4. **Per-project settings instead of per-project skills:** one `PROJECT.md` changes paths, checks and rules; the skills stay the same everywhere.
-5. **Not tied to one AI tool:** start a project in Claude Code, continue it in Codex or Gemini tomorrow. The notes are the same.
+**Core** (always on)
 
-## FAQ
+| Skill | Does |
+|---|---|
+| `mph-resume [project]` | Dashboard of all projects, or straight into one. Read-only. |
+| `mph-handoff [quick]` | Facts from git and tests → one-line plan → writes only what the session produced → commit. |
+| `mph-setup-project` | Adds `notes/` to a project, mapping folders you already have. Never overwrites. |
+| `mph-decision-log` | A decision with its reason; replaces the old one when it changes. |
+| `mph-daily-log` | Today's log without a full handoff. |
+| `mph-menu` | Every command on one screen, plus the active project. |
 
-**My tool already has memory.**
-Use it for preferences. This is for project *state*, which changes every day and belongs in the repo, next to the code, where it's versioned and shared with every tool and teammate.
+**Modules** (switch on or off per project in `PROJECT.md`)
 
-**Why Markdown files and not a database or an MCP server?**
-You can read them, diff them, edit them by hand and open them in Obsidian. If you stop using this tomorrow, your notes still make sense.
+| Skill | Module | Default | Does |
+|---|---|---|---|
+| `mph-knowledge` | knowledge | on | Files research into topics; proposes new topics and splits; "organize notes". |
+| `mph-profile` | profile | on | Working style per project, promoted to a general profile when seen in two projects. |
+| `mph-suggest-skill` | suggestions | on | Spots repeated manual work, suggests a project skill, remembers the answer. |
+| `mph-suggest-agent` | suggestions | on | Suggests a helper agent for heavy, noisy work. |
+| `mph-obsidian-map` | obsidian | off | Links notes, adds tags, keeps map notes and a Canvas. |
 
-**Can I change the folder layout?**
-Yes: write the paths in `notes/PROJECT.md` and every skill follows them.
+All skills read one shared [`RULES.md`](shared/RULES.md) first: how projects are found, the active project, modules, and the safety rules.
+
+## Install for your tool
+
+`./install.sh` detects Claude Code, Codex, Gemini CLI and Antigravity. To choose:
+
+<details>
+<summary>Options</summary>
+
+| You use | Command |
+|---|---|
+| Claude Code | `./install.sh --tool claude` → `~/.claude/skills/` |
+| Codex | `./install.sh --tool codex` → `~/.codex/skills/` |
+| Tools reading `~/.agents/skills` | `./install.sh --tool agents` |
+| Gemini CLI | `./install.sh --tool gemini` → `~/.gemini/skills/` |
+| Antigravity | `./install.sh --tool antigravity` → `~/.gemini/antigravity/skills/` |
+| Any skills folder | `./install.sh --dir PATH` |
+| One project only | `./install.sh --project ~/code/app [--tool claude]` |
+| No skill support (Cursor, Copilot, Windsurf…) | `./install.sh --agents-md ~/code` adds a short block to `AGENTS.md` |
+
+Add `--dry-run` to see what would happen, `--update` to refresh. Skill folders differ between tools and versions; if your tool doesn't see the skills, check its docs and use `--dir`. [Details →](docs/install.md)
+
+</details>
+
+The installer never deletes anything, skips skills with the same name that aren't ours, and appends to `AGENTS.md` only once.
+
+## Safety
+
+- **Never deletes files.** Notes are edited, appended or moved with `git mv`.
+- **Never rewrites git history.** A failed push is reported, not forced.
+- **Never claims work that didn't happen.** "Tests pass" only if they passed during the handoff.
+- **You decide.** New topics, splits, skills and agents are proposals until you say yes.
+- **No secrets in notes**, and your working-style profile stays on your computer unless you choose otherwise.
+
+## Is it for you?
+
+**Yes**, if you work on several projects with AI agents, switch between tools, or keep losing decisions and research between sessions.
+
+**Probably not**, if you have one small project and short sessions (your tool's built-in memory is enough), if you want memory that is fully automatic and invisible (this one shows you everything and asks before changing structure), or if your team already has a documentation system it is happy with.
+
+## How it differs
+
+Most tools in this space keep **one handoff file for one project**, or a memory bank tied to one tool. This one is built for **many projects at once**, gives each kind of information its own lifecycle (state is rewritten, decisions are replaced, logs are append-only, knowledge grows into folders), and works the same in any agent that reads Markdown. [Comparison and FAQ →](docs/comparison.md)
+
+## Documentation
+
+[How it works](docs/how-it-works.md) · [Notes that grow](docs/knowledge.md) · [Working-style profile](docs/profile.md) · [Suggestions](docs/suggestions.md) · [Obsidian](docs/obsidian.md) · [Install](docs/install.md) · [Comparison & FAQ](docs/comparison.md) · [Changelog](CHANGELOG.md)
 
 ## Contributing
 
-Issues and PRs are welcome, especially:
-- confirmed skill-folder paths for more tools
-- `PROJECT.md` examples for different stacks
-- changes that make `resume` read *less*
-- translations
+Issues and PRs welcome, especially confirmed skill-folder paths for more tools, `PROJECT.md` examples for different stacks, and changes that make `mph-resume` read *less*. After editing `shared/`, run `scripts/sync.sh`; before a PR, run `scripts/check.sh`.
 
 ## License
 

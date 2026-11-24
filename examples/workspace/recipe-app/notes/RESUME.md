@@ -15,5 +15,5 @@ Last updated: 2026-11-23
 
 ## Next steps
 1. Finish "remove item" on the shopping list and add its test.
-2. Decide the accounts question, then record it with `decision-log`.
+2. Decide the accounts question, then record it with `mph-decision-log`.
 3. First production deploy.
