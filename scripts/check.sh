@@ -48,4 +48,15 @@ if not badge or badge.group(1) != p["version"]: bad.append("README version badge
 for b in bad: print(b)
 sys.exit(1 if bad else 0)
 PY2
+# uninstall: moves only what we installed, keeps foreign skills and hooks
+U=$(mktemp -d); mkdir -p "$U/.claude/skills/other-skill"
+HOME="$U" ./install.sh >/dev/null || fail=1
+printf '{"hooks":{"PreToolUse":[{"hooks":[{"type":"command","command":"python3 ~/.handoff/mph-guard.py"},{"type":"command","command":"other.sh"}]}]}}' > "$U/.claude/settings.json"
+HOME="$U" ./install.sh --uninstall --dry-run >/dev/null || fail=1
+[ -d "$U/.claude/skills/mph-resume" ] || { echo "uninstall --dry-run changed something"; fail=1; }
+HOME="$U" ./install.sh --uninstall --yes >/dev/null || fail=1
+[ ! -e "$U/.claude/skills/mph-resume" ] || { echo "uninstall left mph-resume in place"; fail=1; }
+[ -d "$U/.claude/skills/other-skill" ] || { echo "uninstall moved a skill that is not ours"; fail=1; }
+ls "$U"/.handoff-removed/*/.claude/skills/mph-resume/SKILL.md >/dev/null 2>&1 || { echo "uninstall did not keep a copy"; fail=1; }
+grep -q other.sh "$U/.claude/settings.json" && ! grep -q mph-guard "$U/.claude/settings.json" || { echo "uninstall hook cleanup wrong"; fail=1; }
 [ "$fail" -eq 0 ] && echo "all checks passed" || { echo "checks failed"; exit 1; }

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **Logo:** a compass, as the plugin icon (`.claude-plugin/icon.png`) and at the top of the README; `docs/logo/make_logo.py` redraws it.
+- **Uninstall:** `./install.sh --uninstall` (with `--dry-run` first) removes what was installed by **moving** it to `~/.handoff-removed/<date-time>/`: marked skill folders in every tool, our files in `~/.handoff/`, the guard's entries in `~/.claude/settings.json` and the `AGENTS.md` block, each with a copy kept. Foreign skills and hooks, personal working-style notes and all project notes stay. Steps in the README and `docs/install.md`, with a prompt to let an AI tool do it. Tested in `check.sh`.
+- **Forgot to set up?** Any `mph-` command in a folder that is not set up now says so and offers to run `mph-setup-project` first, then carries on (tested in Claude Code with a decision on a fresh project).
+- README: **Start here: 3 steps** (install, set up each project, resume/handoff) before the full feature list.
 - README demo GIF: a handoff in Claude Code, resumed the next day in Codex. Replies are real outputs from the test sessions, trimmed; `docs/demo/` holds the script to re-record it with `vhs`.
 - README and install docs: a ready prompt to paste into any AI tool so it installs multiproject-handoff itself (dry run first, then install after a yes).
 

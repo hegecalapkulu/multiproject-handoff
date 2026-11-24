@@ -9,14 +9,22 @@
 #                                    ~/.handoff/skills and add a short block to DIR/AGENTS.md
 #   ./install.sh --update            refresh skills this script installed before
 #   ./install.sh --dry-run           show what would happen, change nothing
+#   ./install.sh --uninstall         remove it again: moves everything it installed to
+#                                    ~/.handoff-removed/ (deletes nothing; add --dry-run first)
 set -e
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+for a in "$@"; do
+  if [ "$a" = "--uninstall" ]; then
+    PY=python3; command -v python3 >/dev/null 2>&1 || PY=python
+    exec "$PY" "$ROOT/scripts/uninstall.py" "$@"
+  fi
+done
 SRC="$ROOT/skills"
 MARK=".multiproject-handoff"
 TOOL=""; DIR=""; PROJECT=""; AGENTS_DIR=""; UPDATE=0; DRY=0
 
-usage() { sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'; }
 
 while [ $# -gt 0 ]; do
   case "$1" in

@@ -1,6 +1,12 @@
 {
   "name": "multiproject-handoff",
-  "owner": { "name": "hegecalapkulu", "url": "https://github.com/hegecalapkulu" },
+  "owner": {
+    "name": "hegecalapkulu",
+    "url": "https://github.com/hegecalapkulu"
+  },
+  "metadata": {
+    "description": "Session handoffs and a multi-project dashboard for AI coding agents, in plain Markdown next to your code."
+  },
   "plugins": [
     {
       "name": "multiproject-handoff",

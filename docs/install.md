@@ -56,6 +56,43 @@ The installer **never deletes anything**, skips any existing skill with the same
 
 Then open a project with your AI tool and say **"setup project"**.
 
+## Uninstall
+
+**Nothing is deleted.** Everything the installer put on your machine is moved to `~/.handoff-removed/<date-time>/`, so you can put it back. Your project notes (`PROJECT.md`, resume notes, backlog, decisions, logs) are never touched: they stay as plain Markdown you can keep reading.
+
+**Step 1: Claude Code plugin.** If you installed the plugin, type in Claude Code:
+
+```
+/plugin uninstall multiproject-handoff
+/plugin marketplace remove multiproject-handoff
+```
+
+**Step 2: everything else.** Needed if you used `install.sh`, or set up the safety guard (also with the plugin). From the repo folder (`git clone` it again if you deleted it):
+
+```bash
+./install.sh --uninstall --dry-run     # shows what it would move, changes nothing
+./install.sh --uninstall               # asks once, then moves it
+```
+
+| It moves | It keeps |
+|---|---|
+| skill folders our installer marked (`.multiproject-handoff` file inside), in every tool's skills folder | skills that are not ours, even with the same name |
+| our files in `~/.handoff/` (`RULES.md`, scripts, `guard.conf`) | your files there, such as `working-style.md` or `PROJECTS.md` |
+| the guard and long-conversation entries in `~/.claude/settings.json` (a copy of the file is kept) | every other setting and hook |
+| the block in `AGENTS.md`, if you add `--agents-md DIR` (a copy is kept) | the rest of `AGENTS.md` |
+
+Installed inside one project? Add `--project DIR`. A skills folder you named? Add `--dir PATH`. Agents can add `--yes` after showing you the dry run.
+
+**Step 3: restart your AI tools.** When you are sure you won't need it, delete `~/.handoff-removed/` yourself.
+
+**Let your AI tool do it:**
+
+```text
+Uninstall multiproject-handoff (https://github.com/hegecalapkulu/multiproject-handoff) from this machine: get the repo, run `./install.sh --uninstall --dry-run` and show me what it would change, then run `./install.sh --uninstall --yes` after I say yes. Keep my project notes.
+```
+
+**Your notes afterwards:** they keep working as ordinary Markdown. If you want them gone too, delete the notes folder yourself; the first line of `PROJECT.md` (`<!-- mph:project … -->`) is only a marker and can stay or go.
+
 ## Safety guard
 
 The skills *promise* not to delete files or rewrite history. The guard *enforces* it: a Claude Code `PreToolUse` hook (plus a `UserPromptSubmit` hook for the long-conversation note and the model advice) (`~/.handoff/mph-guard.py`, placed by the installer but inactive until you set it up) that runs before every command and file change.

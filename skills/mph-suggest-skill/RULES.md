@@ -36,6 +36,7 @@ Once a project is chosen in a session, it is the **active project**, and every s
 - It changes only when the user says so ("switch to landing-page", `mph-resume landing-page`) or clearly starts working on another project; then confirm once: "Switching to **landing-page**?"
 - If no project is active and one is needed: use the working folder if it is a project; otherwise, if exactly one project was touched in this session, confirm it in one sentence; otherwise ask, listing the projects found.
 - Work that touches a second project does not silently change the active project; `mph-handoff` sorts it out.
+- **Nothing set up yet** (no marked `PROJECT.md` in or below the working folder and no `PROJECTS.md`): never just stop or fail. Say in one sentence that this project is not set up yet and offer to do it now: "Set it up now? It takes a minute and keeps any notes you already have. (yes / no)". On yes, run `mph-setup-project`, then go on with what the user asked. On no, help with the request as far as possible without writing notes.
 
 ## 3. Project settings
 

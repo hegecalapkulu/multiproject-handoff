@@ -23,7 +23,7 @@ Read as little as possible, but the right things. This skill changes no files.
 - **Otherwise**, find projects (RULES.md §1):
   - the working folder is a project, or exactly one project is found → use it, and name it in one line;
   - several → show the **dashboard** and wait for the pick;
-  - none → "No project notes found here." and offer `mph-setup-project` (it can also adopt notes you already have).
+  - none → this folder is not set up yet: offer to run `mph-setup-project` right now (RULES.md §2, "Nothing set up yet"); on yes, run it and then resume.
 
 ### The dashboard
 

@@ -1,4 +1,6 @@
-<h1 align="center">🧭 multiproject-handoff</h1>
+<p align="center"><img src="docs/logo/logo.png" alt="multiproject-handoff logo" width="96"></p>
+
+<h1 align="center">multiproject-handoff</h1>
 
 <p align="center"><b>Pick up any project where you left off, with any AI coding agent.</b><br>
 One dashboard for all your projects. Notes that grow with each project. An agent that learns how you work.</p>
@@ -34,7 +36,15 @@ Which one? (number or name)
 
 **Works best with Claude Code and Codex.** Both are tested end to end, including a handoff in one and a resume in the other. It is built on the open Agent Skills format, so it is highly compatible with other tools that read Agent Skills or `AGENTS.md` (Gemini CLI, Antigravity, Cursor, Copilot, Windsurf…). Minor differences in how a tool handles a step may occasionally come up; reports are welcome.
 
-## What do you need?
+## Start here: 3 steps
+
+1. **Install** (once). Claude Code: `/plugin install multiproject-handoff --marketplace hegecalapkulu/multiproject-handoff`. Any other tool: paste the prompt from [Quick start](#quick-start).
+2. **Set up each project** (once). Open it and run `/mph-setup-project`. It reads the project, asks a few questions, and keeps the notes you already have.
+3. **Every session:** `/mph-resume` at the start, `/mph-handoff` at the end.
+
+That's all you need. Forgot step 2? Any `mph-` command notices and offers to set the project up first. Everything below runs on its own during a handoff or when you ask; `/mph-menu` lists it all.
+
+## What else can it do?
 
 | You want to… | Use | You get |
 |---|---|---|
@@ -155,6 +165,24 @@ On Windows, run it from Git Bash (comes with Git for Windows) or WSL; see [Windo
 </details>
 
 The installer never deletes anything, skips skills with the same name that aren't ours, and appends to `AGENTS.md` only once.
+
+## Uninstall
+
+Nothing is deleted: what was installed is **moved** to `~/.handoff-removed/<date-time>/`, and **your project notes stay** as plain Markdown.
+
+1. **Claude Code plugin:** type `/plugin uninstall multiproject-handoff` (and `/plugin marketplace remove multiproject-handoff`).
+2. **Installed with `install.sh`, or set up the safety guard:** from the repo folder, look first, then remove:
+   ```bash
+   ./install.sh --uninstall --dry-run
+   ./install.sh --uninstall
+   ```
+   It moves only the skills our installer marked, our files in `~/.handoff/`, the guard's entries in `~/.claude/settings.json` (a copy is kept) and, with `--agents-md DIR`, the block in `DIR/AGENTS.md`. Your own skills, hooks and working-style notes stay.
+3. **Or let your AI tool do it.** Paste:
+   ```text
+   Uninstall multiproject-handoff (https://github.com/hegecalapkulu/multiproject-handoff) from this machine: get the repo, run `./install.sh --uninstall --dry-run` and show me what it would change, then run `./install.sh --uninstall --yes` after I say yes. Keep my project notes.
+   ```
+
+Restart your tools afterwards. When you are sure, delete `~/.handoff-removed/` yourself. [Details →](docs/install.md#uninstall)
 
 ## Safety
 
