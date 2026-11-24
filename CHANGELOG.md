@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **No git? Handoff offers it, once.** In a folder without git, `mph-handoff` adds one line to its plan: start version history so any bad change can be undone (stays on this computer). `yes` sets up git with a safe `.gitignore` (`.env`, `node_modules/`, local profile) and a first commit that leaves out secrets and huge files; `not now` waits 30 days (the third one counts as `never`); `never` stops asking. The answer is kept as `Git:` in `PROJECT.md`. Never asked in `quick` mode. Tested in Claude Code (Sonnet) on a project without git: the plan showed the offer as one line; `yes` started git, kept `.env` out of the first commit and recorded `Git: on`; with a 5-day-old `not now`, the next handoff did not ask.
+
 ## 0.6.0 (2026-11-24)
 
 - **Logo:** a thinking meerkat in silhouette, glasses on and a pencil behind its ear, as the plugin icon (`.claude-plugin/icon.png`) and at the top of the README; `docs/logo/make_logo.py` redraws it.
