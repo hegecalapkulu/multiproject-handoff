@@ -39,7 +39,8 @@ Adapt it to what you found, with the current values pre-selected:
   5. Ask before these commands: (e.g. deploy.sh, npm publish)      ______
   6. Never edit inside these folders: (from your Never list: dist/)  ______
   7. When a delete is blocked, suggest moving to: (e.g. ~/Desktop/To-delete/) ______
-  8. [x] Tell me when the conversation gets long (at 120k, 250k, 500k tokens) and suggest a handoff
+  8. [x] Tell me when the conversation gets long (at 150k, 300k, 600k tokens) and suggest a handoff
+  9. [x] Before a clearly simple task on a large model, offer once to switch to a lighter one (I decide)
 
 Enter keeps the marks as shown.
 ```
@@ -56,8 +57,9 @@ Enter keeps the marks as shown.
    protect_paths=~/code/recipe-app/dist
    trash_folder=~/Desktop/To-delete
    context_hint=on
-   context_hint_tokens=120000,250000,500000
+   context_hint_tokens=150000,300000,600000
    context_hint_command=mph-handoff   # or the user's own handoff command
+   model_advice=on
    ```
 2. **Registering the hook changes Claude Code's security settings, so show the exact change first** and wait for a clear yes:
    ```json
@@ -68,7 +70,7 @@ Enter keeps the marks as shown.
    ```json
    { "hooks": [ { "type": "command", "command": "python3 ~/.handoff/mph-context.py" } ] }
    ```
-   added to `hooks.UserPromptSubmit`. On Windows use `python` and the full path (`python %USERPROFILE%\\.handoff\\mph-guard.py`), since `~` and `python3` may not exist there. Read the file, add only this entry (skip if it is already there), keep everything else exactly as it was, and check the result is valid JSON.
+   added to `hooks.UserPromptSubmit` (items 8 and 9 share this one entry). On Windows use `python` and the full path (`python %USERPROFILE%\\.handoff\\mph-guard.py`), since `~` and `python3` may not exist there. Read the file, add only this entry (skip if it is already there), keep everything else exactly as it was, and check the result is valid JSON.
 3. **Test it** without risk, by piping sample calls into the script:
    ```bash
    echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf demo"}}' | python3 ~/.handoff/mph-guard.py
@@ -80,6 +82,10 @@ Enter keeps the marks as shown.
 ### About the long-conversation hint
 
 The model cannot reliably feel how long its own conversation is, but Claude Code records the size after every reply. `mph-context.py` reads that before each user message; when a threshold is first crossed it shows a one-line note and asks the agent to suggest `mph-handoff` once, at a natural stopping point. Thresholds are in tokens, not percent, because context windows differ between models (200k, 1M); the defaults suit both. Change them in `guard.conf`.
+
+### About the model advice
+
+On the first message of each session, the same hook leaves the agent one short instruction: if it knows which model it is running on, and that model is a large one, then before starting a **clearly simple, mechanical task that is also large** (many files, long texts, dozens of repeated edits) it offers once (for a small task, asking would cost more than it saves, so it just does it): switch to a lighter model (with the exact command for this tool), continue, or don't ask again. It never switches or delegates silently, never offers for planning, architecture, hard debugging or security, and stays quiet if it cannot tell which model it is. "Don't ask again" sets `model_advice=off`.
 
 ## Rules
 

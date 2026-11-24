@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (2026-11-24)
+
+- **Model advice** (part of the `mph-guard` hooks, on by default there): before a clearly simple, mechanical **and large** task on a large model (many files, long texts; small tasks are just done), the agent offers once to switch to a lighter one, with the exact command for the tool. The user decides; nothing is switched or delegated silently; it stays quiet if the agent can't tell which model it is. "Don't ask again" turns it off.
+- **Long-conversation note:** thresholds raised to 150k / 300k / 600k tokens; the suggested command is configurable (`context_hint_command`). Tested live in Claude Code.
+
 ## 0.3.0 (2026-11-24)
 
 - **Cheaper sessions, same information.** `mph-scan.py` (read-only, standard library) gathers in one call what used to take many steps: the dashboard, a project's load bundle, and the git facts for a handoff. It understands Turkish and English dates, paths with spaces and adopted files. Measured on a real Obsidian vault (copy, Claude Code, Sonnet): dashboard **12 → 3 steps, $0.20 → $0.10**; resume **3 steps, $0.12**.

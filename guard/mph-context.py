@@ -7,8 +7,14 @@ size first crosses one of the thresholds, it shows the user a short note
 and asks the agent to suggest `mph-handoff` + a new session once, at a
 natural stopping point. Each threshold fires once per session.
 
+It also carries the optional **model advice**: on the first message of each
+session it leaves the agent one short instruction: before starting a clearly
+simple, mechanical task on a large model, offer once to switch to a lighter
+one (the user decides; nothing happens silently). `model_advice=off` disables it.
+
 Thresholds (tokens) come from `context_hint_tokens` in ~/.handoff/guard.conf,
-default 120000,250000,500000. Set `context_hint=off` to disable.
+default 150000,300000,600000 (the first one stays below the ~160k where
+200k-window models get compacted). Set `context_hint=off` to disable.
 `context_hint_command` sets the command it suggests (default mph-handoff;
 use your own, e.g. /devir, if you hand off differently).
 
@@ -25,7 +31,7 @@ STATE = os.environ.get("MPH_CONTEXT_STATE", os.path.join(HOME, "context-state.js
 
 
 def conf():
-    c = {"context_hint": "on", "context_hint_tokens": "120000,250000,500000",
+    c = {"context_hint": "on", "context_hint_tokens": "150000,300000,600000", "model_advice": "on",
          "context_hint_command": "mph-handoff"}
     try:
         for line in open(CONF, encoding="utf-8"):
@@ -59,40 +65,71 @@ def context_size(path):
     return size
 
 
+MODEL_ADVICE = (
+    "[multiproject-handoff · model advice, applies to this whole session] "
+    "Only if you know which model you are running on and it is a large one: when the user asks for a task "
+    "that is clearly simple and mechanical (renaming, formatting, short summaries, simple text edits, "
+    "repetitive changes) AND large enough that a lighter model saves meaningfully (many files, long texts, "
+    "dozens of repeated edits, or a long run of such work), then BEFORE starting, offer once, in a short block in the user's language: "
+    "1) switch to a lighter model (give the exact command or setting for this tool, e.g. `/model sonnet`), "
+    "2) continue with the current model, 3) don't ask again. Then wait for the answer. "
+    "For a small task that takes a moment, just do it: asking would cost more than it saves. "
+    "Never offer it for planning, architecture, hard debugging, security, anything the user called important, "
+    "or when you are unsure; never switch models or delegate to a smaller model silently. "
+    "Ask at most once per session, and not again after the user chose 2. If the user chooses 3, set "
+    "`model_advice=off` in ~/.handoff/guard.conf (their choice is the permission). "
+    "If you cannot tell which model you are, ignore this entirely.")
+
+
+def load_state():
+    try:
+        return json.load(open(STATE, encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def save_state(state):
+    state = dict(list(state.items())[-100:])  # keep the file small
+    try:
+        os.makedirs(os.path.dirname(STATE), exist_ok=True)
+        json.dump(state, open(STATE, "w", encoding="utf-8"))
+    except OSError:
+        pass
+
+
 def main():
     try:
         data = json.load(sys.stdin)
     except Exception:
         sys.exit(0)
     c = conf()
+    sid = data.get("session_id", "unknown")
+    state = load_state()
+    out = {}
+    if c["model_advice"] == "on" and not state.get("advice:" + sid):
+        state["advice:" + sid] = 1
+        save_state(state)
+        out = {"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": MODEL_ADVICE}}
     if c["context_hint"] != "on":
+        if out:
+            print(json.dumps(out))
         sys.exit(0)
     size = context_size(data.get("transcript_path", ""))
     try:
         limits = sorted(int(x) for x in c["context_hint_tokens"].split(",") if x.strip())
     except ValueError:
-        limits = [120000, 250000, 500000]
+        limits = [150000, 300000, 600000]
     crossed = [t for t in limits if size >= t]
-    if not crossed:
+    top = crossed[-1] if crossed else 0
+    if not crossed or state.get(sid, 0) >= top:  # below the thresholds, or already told at this level
+        if out:
+            print(json.dumps(out))
         sys.exit(0)
-    sid = data.get("session_id", "unknown")
-    try:
-        state = json.load(open(STATE, encoding="utf-8"))
-    except (OSError, ValueError):
-        state = {}
-    top = crossed[-1]
-    if state.get(sid, 0) >= top:
-        sys.exit(0)  # already told the user at this level
     state[sid] = top
-    state = dict(list(state.items())[-50:])  # keep the file small
-    try:
-        os.makedirs(os.path.dirname(STATE), exist_ok=True)
-        json.dump(state, open(STATE, "w", encoding="utf-8"))
-    except OSError:
-        pass
+    save_state(state)
     k = round(size / 1000)
     cmd = c["context_hint_command"]
-    print(json.dumps({
+    hint = {
         "systemMessage": f"🧭 This conversation is about {k}k tokens long. "
                          f"A fresh session after `{cmd}` would be cheaper and sharper.",
         "hookSpecificOutput": {
@@ -103,7 +140,10 @@ def main():
                 "(not in the middle of a task), suggest in one short sentence in the user's "
                 f"language: run {cmd} and continue in a new session. Do not repeat it."),
         },
-    }))
+    }
+    if out:  # both on the same message: join the two instructions
+        hint["hookSpecificOutput"]["additionalContext"] += "\n\n" + MODEL_ADVICE
+    print(json.dumps(hint))
     sys.exit(0)
 
 

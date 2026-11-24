@@ -29,7 +29,7 @@ Then open a project with your AI tool and say **"setup project"**.
 
 ## Safety guard
 
-The skills *promise* not to delete files or rewrite history. The guard *enforces* it: a Claude Code `PreToolUse` hook (`~/.handoff/mph-guard.py`, placed by the installer but inactive until you set it up) that runs before every command and file change.
+The skills *promise* not to delete files or rewrite history. The guard *enforces* it: a Claude Code `PreToolUse` hook (plus a `UserPromptSubmit` hook for the long-conversation note and the model advice) (`~/.handoff/mph-guard.py`, placed by the installer but inactive until you set it up) that runs before every command and file change.
 
 Run `mph-guard` and pick from a short checklist:
 
@@ -41,6 +41,10 @@ Run `mph-guard` and pick from a short checklist:
 | `ask_push` | off | asks before every `git push` |
 | `ask_commands` | empty | asks before commands containing these words (`deploy.sh`, `npm publish`) |
 | `protect_paths` | empty | no edits or writes inside these folders |
+| `context_hint` | on | once per threshold, a note when the conversation gets long, and the agent suggests a handoff |
+| `context_hint_tokens` | 150000,300000,600000 | the thresholds (the first stays below where 200k-window models get compacted) |
+| `context_hint_command` | mph-handoff | the command it suggests (use your own, e.g. `/devir`) |
+| `model_advice` | on | before a clearly simple task on a large model, the agent offers once to switch to a lighter one; you decide |
 
 Choices live in `~/.handoff/guard.conf`; change them any time by running `mph-guard` again. Registering the hook is shown to you first and needs your yes; existing hooks are never removed. Other tools (Codex, Gemini CLI, Cursor) have their own approval or sandbox settings; use those there.
 

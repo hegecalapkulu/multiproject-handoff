@@ -99,6 +99,7 @@ add_agents_block() { # $1 = folder that gets AGENTS.md
     echo "- \"menu\" → \`$HOME/.handoff/skills/mph-menu/SKILL.md\` (lists all the others)"
     echo
     echo "Before any of them, read \`$HOME/.handoff/RULES.md\`. Never delete files or rewrite git history."
+    echo "Model advice: if you know which model you are and it is a large one, before a clearly simple task offer once to switch to a lighter model (the user decides; never switch silently)."
     echo "<!-- multiproject-handoff:end -->"
   } >> "$file"
 }
