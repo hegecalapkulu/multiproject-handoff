@@ -42,7 +42,16 @@ Confirm the folder and the mode in one sentence before anything else.
 - **Obsidian:** a `.obsidian/` folder in the working folder, the project or any parent folder means a vault. Hidden folders are skipped by many search tools, so check with `ls -a` on each of those folders.
 - **Name clashes:** if a `notes/` folder or a `PROJECT.md` already exists **without** the marker, it is the user's. Do not write into it; choose another notes folder (`.mph/` by default, or what the user prefers).
 
-## 3. Show one screen
+## 3. Understand the project, then show one screen
+
+**For an existing project** (code, git history or notes already there; not an empty folder), first build a picture of it from what you read in step 2: what it is and who it is for, where it stands, what seems to come next. Then write down what the files did **not** tell you about the project itself, for example:
+- the goal or who it is for, if the README does not say;
+- what is finished, what is half done, and what matters most right now;
+- anything blocking it, or a decision that is still open;
+- which of several folders, branches or notes is the current one, if that is unclear.
+
+Ask only these leftover questions, **at most 5**, each one specific to this project ("The README mentions a mobile app, but there is no mobile code: is it still planned?"), never a generic questionnaire. Skip any question the files already answer. If nothing is left unclear, ask none. Put them on the same screen as the settings, under what you understood, so the user answers everything at once and can skip any question.
+
 
 Show what you found and what you propose, in this shape (adapt the wording to the user's language):
 
@@ -56,6 +65,12 @@ Found notes, I'd use them where they are (nothing moves or gets renamed):
   knowledge    → docs/research/
 New, in .mph/ (notes/ is already used for something else):
   PROJECT.md (settings) · daily/ · SUGGESTIONS.md
+
+What I understood: a recipe app with ingredient search (done) and a
+shopping list (half done); preview deployed, production not yet.
+Before I start, a few things the files didn't tell me (skip any):
+  a. TODO.md lists user accounts and offline mode: which comes first?
+  b. There are two deploy scripts (deploy.sh, deploy-old.sh): is the old one still used?
 
 A few choices (Enter keeps the default):
   1. Language for notes and replies: 1 English · 2 Español · 3 中文 · 4 Português · 5 Türkçe · 6 other: ___   (default: English)
@@ -76,8 +91,8 @@ OK?
 
 ## 4. Write (after OK)
 
-1. **`PROJECT.md`** in the notes folder, from `templates/PROJECT.md`. **First line: `<!-- mph:project <name> -->`.** If the project already has a settings note for other skills (for example a "project settings" note with a decision map, report rules or a backup command), add a line `- Also follow: <path to it>` at the top of `PROJECT.md`, and copy nothing from it: its rules then apply to every mph skill too. Write the chosen language under `## Language`. Fill `## Paths` with the adopted files (paths relative to the notes folder, e.g. `../TODO.md`), `## Modules`, check command, push, "Never" list, and the existing folders as decision and knowledge maps.
-2. **Only the files that do not exist yet**, from `templates/`: a resume note if none was adopted (filled from what you learned; "Next steps" left for the user), backlog, decisions, `daily/_template.md`. Never overwrite or move an existing file.
+1. **`PROJECT.md`** in the notes folder, from `templates/PROJECT.md`. **First line: `<!-- mph:project <name> -->`.** If the project already has a settings note for other skills (for example a "project settings" note with a decision map, report rules or a backup command), add a line `- Also follow: <path to it>` at the top of `PROJECT.md`, and copy nothing from it: its rules then apply to every mph skill too. Write the chosen language under `## Language`. Write what you understood and the user's answers to the project questions under `## About` (a few lines; skip questions the user skipped). Fill `## Paths` with the adopted files (paths relative to the notes folder, e.g. `../TODO.md`), `## Modules`, check command, push, "Never" list, and the existing folders as decision and knowledge maps.
+2. **Only the files that do not exist yet**, from `templates/`: a resume note if none was adopted (filled from what you learned and the user's answers; "Next steps" left for the user), backlog, decisions, `daily/_template.md`. Never overwrite or move an existing file.
 3. **Adopted files keep their format.** Skills write into them following the style they already have (headings, language, numbering), and add only what they need.
 4. **Profile:** unless the user chose to share it, append `<notes folder>/working-style*.md` to the project's `.gitignore` (append only; create the file if missing).
 5. **adopt many:** write `PROJECTS.md` in the parent folder (one line per project; append only if it exists).
@@ -92,4 +107,5 @@ One short report: what was adopted, what was created and where, what was left un
 
 - Never move, rename, delete or reformat the user's files. Adopting means **mapping**, not migrating.
 - Never write into a file or folder that is not mapped in a marked `PROJECT.md`.
+- Understand before asking: read first, then ask only what the files left open (at most 5 project questions). Never ask what you could have read.
 - Ask at most one screen of questions; everything else has a default the user can change later in `PROJECT.md`.
