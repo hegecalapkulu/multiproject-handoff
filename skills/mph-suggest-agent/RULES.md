@@ -59,7 +59,7 @@ A missing line means the default above.
 
 - Every skill that writes notes starts its report with **`🧭 [project-name]`**, for example `🧭 [recipe-app] decision recorded`. A wrong project is then visible at once.
 - Keep reports short: what changed, where, and anything unfinished or failing.
-- **Write in the user's language**: the language they write to you in (or, if unclear, the language of the project's notes), including headings and labels such as "Where we are". Keep file and command names as they are.
+- **Write in the user's language**: the language they write to you in, including headings and labels such as "Where we are". A bare command or project name (`mph-resume recipe-app`) shows no language: then use the language of the project's notes, and never another one. Keep file and command names as they are.
 
 ## 5. Fewer steps, same information
 

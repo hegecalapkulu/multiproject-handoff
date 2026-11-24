@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- **Tested across tools:** a handoff written by Claude Code was resumed by Codex (0.172) in the same folder, with the right state and next step, in 3 steps. Fixes from that test: the rules lookup now says plainly that `RULES.md` sits next to `SKILL.md` (Codex looked one folder up), and a bare command such as `mph-resume recipe-app` is answered in the language of the notes (Codex once answered in another language).
+- README: use several AI tools on a project **one at a time**.
 - **One-line install for Claude Code:** the repo is now a Claude Code plugin marketplace. `/plugin install multiproject-handoff --marketplace hegecalapkulu/multiproject-handoff` installs all 12 skills (no hooks; the guard stays opt-in). Tested with a real session: `/mph-resume` showed the example dashboard in 4 steps, about $0.11.
 - **CI:** `scripts/check.sh` runs on every push and pull request (GitHub Actions, Ubuntu and macOS); "tests" badge in the README.
 

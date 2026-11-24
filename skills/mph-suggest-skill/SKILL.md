@@ -7,7 +7,7 @@ description: Find work the user keeps repeating by hand, in this session or acro
 
 <!-- mph:lookup:start -->
 > **Shared rules first.** Read `RULES.md` before anything else. Look for it in this order and stop at the first hit:
-> 1. `RULES.md` in this skill's own folder (the folder this `SKILL.md` was loaded from; many tools state it as the skill's base directory). Read it directly, without searching;
+> 1. `RULES.md` next to this `SKILL.md`, in the same folder (if this file is `…/mph-resume/SKILL.md`, read `…/mph-resume/RULES.md`, not the parent `skills/` folder; many tools state this folder as the skill's base directory). Read it directly, without searching;
 > 2. `~/.handoff/RULES.md`;
 > 3. a search of the home folder, a few levels deep (skip `node_modules`, `.git`, `Library`, `AppData`), for a `RULES.md` whose first line contains `multiproject-handoff RULES`.
 >
