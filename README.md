@@ -4,7 +4,7 @@
 One dashboard for all your projects. Notes that grow with each project. An agent that learns how you work.</p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/version-0.1.0-blue" alt="version 0.1.0">
+<img src="https://img.shields.io/badge/version-0.2.0-blue" alt="version 0.2.0">
 <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
 <img src="https://img.shields.io/badge/format-Agent%20Skills%20(SKILL.md)-orange" alt="Agent Skills">
 <img src="https://img.shields.io/badge/works%20with-Claude%20Code%20·%20Codex%20·%20Gemini%20·%20Cursor%20·%20Copilot-lightgrey" alt="works with">
@@ -31,6 +31,7 @@ Which one? (number or name)
 
 | You want to… | Use | You get |
 |---|---|---|
+| Bring in projects you already have, notes and all | `mph-setup-project` | your existing files adopted where they are: nothing moves or gets renamed |
 | Continue where you stopped, without re-explaining | `mph-resume` · `mph-handoff` | a ≤8-line status and the next step |
 | Juggle several projects | the `mph-resume` dashboard | every project on one screen, forgotten ones flagged ⚠ |
 | Keep decisions and research instead of losing them in chat | `mph-decision-log` · `mph-knowledge` | notes that grow into folders as the project grows ([more](docs/knowledge.md)) |
@@ -50,7 +51,7 @@ cd multiproject-handoff
 
 **Try it in one minute:** open your AI tool in [`examples/workspace/`](examples/workspace/) (three filled-in projects) and run `/mph-resume`.
 
-**Use it on your project:** open the project and run `/mph-setup-project`. From then on: `/mph-resume` to start a session, `/mph-handoff` to end one. In tools without slash commands, just say "resume" or "handoff".
+**Use it on your project:** open the project (or a whole folder or Obsidian vault of projects) and run `/mph-setup-project`. It looks around first: notes you already keep (`TODO.md`, `docs/adr/`, a status note, research folders…) are **adopted where they are**, and it asks only what it can't work out, on one screen. From then on: `/mph-resume` to start a session, `/mph-handoff` to end one. In tools without slash commands, just say "resume" or "handoff".
 
 ## How it works
 
@@ -75,6 +76,8 @@ recipe-app/notes/
 └── working-style.md    how you like to work here (git-ignored by default)
 ```
 
+**Projects are recognized by a marker, not by file names.** The first line of `PROJECT.md` (`<!-- mph:project recipe-app -->`) marks the notes folder, so a `RESUME.md` that is really your CV, or a `notes/` folder full of meeting notes, is never mistaken for ours. The notes folder can have any name (`notes/`, `.mph/`, `00 Notes/`). See [`examples/workspace/landing-page/`](examples/workspace/landing-page/): an adopted project whose own `notes/` folder is left alone.
+
 **Your structure, your rules.** Everything about how notes are organized lives in `PROJECT.md`: folder names, language, numbering, where things go, which modules are on. Every skill follows it, so a client project, a thesis and a side app can each look the way you want with the same skills. [More →](docs/knowledge.md#your-structure-your-rules)
 
 ## Skills
@@ -85,7 +88,7 @@ recipe-app/notes/
 |---|---|
 | `mph-resume [project]` | Dashboard of all projects, or straight into one. Read-only. |
 | `mph-handoff [quick]` | Facts from git and tests → one-line plan → writes only what the session produced → commit. |
-| `mph-setup-project` | Adds `notes/` to a project, mapping folders you already have. Never overwrites. |
+| `mph-setup-project` | Sets up a project, or adopts the notes it (or a whole vault) already has. Never moves, renames or overwrites. |
 | `mph-decision-log` | A decision with its reason; replaces the old one when it changes. |
 | `mph-daily-log` | Today's log without a full handoff. |
 | `mph-menu` | Every command on one screen, plus the active project. |
@@ -99,6 +102,8 @@ recipe-app/notes/
 | `mph-suggest-skill` | suggestions | on | Spots repeated manual work, suggests a project skill, remembers the answer. |
 | `mph-suggest-agent` | suggestions | on | Suggests a helper agent for heavy, noisy work. |
 | `mph-obsidian-map` | obsidian | off | Links notes, adds tags, keeps map notes and a Canvas. |
+
+**Optional safety guard:** `mph-guard` sets up a Claude Code hook that *really* blocks deleting files, rewriting git history and reading `.env` secrets, and asks before commands you name (deploy, publish). You pick what it blocks; it changes your settings only after a yes. [More →](docs/install.md#safety-guard)
 
 All skills read one shared [`RULES.md`](shared/RULES.md) first: how projects are found, the active project, modules, and the safety rules.
 
@@ -133,6 +138,7 @@ The installer never deletes anything, skips skills with the same name that aren'
 - **Never claims work that didn't happen.** "Tests pass" only if they passed during the handoff.
 - **You decide.** New topics, splits, skills and agents are proposals until you say yes.
 - **No secrets in notes**, and your working-style profile stays on your computer unless you choose otherwise.
+- **Want it enforced, not just promised?** `mph-guard` turns these rules into a hook that blocks the action before it runs.
 
 ## Is it for you?
 

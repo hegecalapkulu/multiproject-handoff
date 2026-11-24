@@ -111,6 +111,9 @@ place_rules() { # shared rules at the known address ~/.handoff/RULES.md
   echo "→ shared rules: $rules"
   [ "$DRY" -eq 1 ] && return
   mkdir -p "$HOME/.handoff"; cp "$ROOT/shared/RULES.md" "$rules"
+  # the optional guard script (not registered here; the mph-guard skill does that after asking)
+  cp "$ROOT/guard/mph-guard.py" "$HOME/.handoff/mph-guard.py"
+  echo "→ guard script: $HOME/.handoff/mph-guard.py (inactive until you run mph-guard)"
 }
 
 if [ -n "$AGENTS_DIR" ]; then

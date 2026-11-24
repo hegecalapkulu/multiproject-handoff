@@ -38,7 +38,8 @@ While working
   mph-obsidian-map        link the notes, update the map, draw a canvas               (module)
 
 Setup and growth
-  mph-setup-project       add the notes structure to a project
+  mph-setup-project       set up a project, or adopt the notes it already has
+  mph-guard               safety guard: really block deleting, history rewrites, secrets
   mph-suggest-skill       spot repeated work, suggest a skill                         (module)
   mph-suggest-agent       suggest a helper agent for heavy, noisy work                (module)
 

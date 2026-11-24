@@ -26,3 +26,22 @@ Skill folders differ between tools and change between versions. If your tool doe
 The installer **never deletes anything**, skips any existing skill with the same name, appends to `AGENTS.md` only once (never overwrites it), and `--update` refreshes only what it installed itself.
 
 Then open a project with your AI tool and say **"setup project"**.
+
+## Safety guard
+
+The skills *promise* not to delete files or rewrite history. The guard *enforces* it: a Claude Code `PreToolUse` hook (`~/.handoff/mph-guard.py`, placed by the installer but inactive until you set it up) that runs before every command and file change.
+
+Run `mph-guard` and pick from a short checklist:
+
+| Choice | Default | What it does |
+|---|---|---|
+| `block_delete` | on | blocks deleting commands and deleting from scripts; can suggest a "to delete" folder instead |
+| `block_history` | on | blocks force push, hard resets, rebase, amend |
+| `block_secrets` | on | blocks reading `.env` files and dumping environment variables |
+| `ask_push` | off | asks before every `git push` |
+| `ask_commands` | empty | asks before commands containing these words (`deploy.sh`, `npm publish`) |
+| `protect_paths` | empty | no edits or writes inside these folders |
+
+Choices live in `~/.handoff/guard.conf`; change them any time by running `mph-guard` again. Registering the hook is shown to you first and needs your yes; existing hooks are never removed. Other tools (Codex, Gemini CLI, Cursor) have their own approval or sandbox settings; use those there.
+
+Test it yourself: `python3 scripts/test-guard.py`.

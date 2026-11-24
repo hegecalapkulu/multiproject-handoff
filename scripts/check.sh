@@ -27,4 +27,10 @@ T=$(mktemp -d); mkdir -p "$T/.claude"
 HOME="$T" ./install.sh >/dev/null || fail=1
 n=$(ls "$T/.claude/skills" | wc -l | tr -d ' '); [ "$n" -eq "$(ls skills | wc -l | tr -d ' ')" ] || { echo "installer installed $n skills"; fail=1; }
 [ -f "$T/.handoff/RULES.md" ] || { echo "installer did not place ~/.handoff/RULES.md"; fail=1; }
+[ -f "$T/.handoff/mph-guard.py" ] || { echo "installer did not place the guard script"; fail=1; }
+python3 scripts/test-guard.py >/dev/null || { echo "guard tests failed (run scripts/test-guard.py)"; fail=1; }
+for p in examples/workspace/*/; do
+  find "$p" -maxdepth 3 -name PROJECT.md -exec head -1 {} \; | grep -q '^<!-- mph:project ' || { echo "example without marked PROJECT.md: $p"; fail=1; }
+done
+head -1 skills/mph-setup-project/templates/PROJECT.md | grep -q '^<!-- mph:project ' || { echo "template PROJECT.md has no marker"; fail=1; }
 [ "$fail" -eq 0 ] && echo "all checks passed" || { echo "checks failed"; exit 1; }

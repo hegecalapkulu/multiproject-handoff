@@ -1,9 +1,9 @@
 ---
 name: mph-setup-project
-description: Set up the handoff notes structure (PROJECT.md, RESUME.md, BACKLOG.md, DECISIONS.md, daily logs) in the current project, filled from what is already known. Use when the user says "set up notes", "setup-project", or when handoff/resume finds no notes folder.
+description: Set up multiproject-handoff for a project, or adopt the notes a project (or a whole folder or Obsidian vault of projects) already has, without moving or renaming anything. Looks around first, shows what it found and what it proposes in one short screen, asks only what it cannot work out, and writes a marked PROJECT.md. Use when the user says "mph-setup-project", "/mph-setup-project", "set up this project", "adopt my notes", or when another skill finds no project.
 ---
 
-# Setup project notes
+# mph-setup-project: fit into what is already there
 
 <!-- mph:lookup:start -->
 > **Shared rules first.** Read `RULES.md` before anything else. Look for it in this order and stop at the first hit:
@@ -14,31 +14,79 @@ description: Set up the handoff notes structure (PROJECT.md, RESUME.md, BACKLOG.
 > If it was found by searching, use it and tell the user where, offering to copy it back to `~/.handoff/`. If it is nowhere, say so and suggest re-running `install.sh`. Never guess the rules.
 <!-- mph:lookup:end -->
 
-## Steps
+Principle: **the system adapts to the user, not the other way round.** Look first, propose second, write last. One short screen of questions, with good defaults, so setup takes a minute.
 
-1. **Find the project** (the folder this session is working in). Confirm the folder with the user in one sentence before writing anything.
-2. **Look before writing.** If `notes/` already exists, list what is there and only add what is missing. Never overwrite an existing file.
-3. **Learn the project quickly:** read the README, the package/build files and `git log --oneline -15` if it is a git repo. Find the check command (tests, lint, build).
-4. **Create** (from the `templates/` folder next to this SKILL.md, adapted to the project):
-   - `notes/PROJECT.md`: paths, check command, backup/commit habit, decision map, an empty knowledge map. Keep only the lines that apply. If the project already has notes or docs folders (research, specs, meeting notes), **map them as they are** instead of creating new ones.
-   - `notes/RESUME.md`: "Where we are" filled from what you learned; "Next steps" left for the user to confirm.
-   - `notes/BACKLOG.md`: sections `## Now`, `## Next`, `## Later`, empty unless the user names work.
-   - `notes/DECISIONS.md`: empty heading list.
-   - `notes/daily/_template.md` (from `daily-template.md`).
-5. **Ask the user these questions in one message** and write the answers into `PROJECT.md`:
-   - What command tells us the project is healthy?
-   - Should handoff push to the remote, or only commit?
-   - Anything the assistant must never do in this project?
-   - (Optional) Any way you like notes organized? (folder names, language, numbering) → written under "Structure rules".
-   - Your working-style profile stays **on this computer only** by default (not sent to GitHub). Keep it that way, or commit it with the notes? → `Profile: local` or `Profile: committed`.
-   - (Only if the notes are in an Obsidian vault, i.e. a `.obsidian/` folder above them) Keep the notes linked as an Obsidian map at every handoff? → `obsidian: on` under `## Modules`.
-   - Which optional modules to switch on (knowledge, profile, suggestions, obsidian)? Default: all on except obsidian. → `## Modules`.
-6. **Git-ignore the profile** unless the user chose `committed`: append `notes/working-style*.md` to the project's `.gitignore` (create it if missing; append only, never rewrite).
-7. **Register it** if the user keeps a project list: if a `PROJECTS.md` exists in the parent folder or in `~/.handoff/`, add a line `- <name>: <path>` (append only). If the notes live apart from the code, write the code folder in the `Code` row of `PROJECT.md`.
-8. Commit the new `notes/` folder if the project is a git repo.
-9. Tell the user: "From now on: `/mph-resume` to start a session, `/mph-handoff` to end one."
+## 1. Which mode?
+
+Look at the working folder (and what the user said):
+
+| Situation | Mode |
+|---|---|
+| A single project, no notes of its own | **new** |
+| A single project that already has notes (resume/handoff notes, TODO or backlog, decision records, research, meeting notes, a `docs/` folder…) | **adopt** |
+| A folder of several projects (a code folder, an Obsidian vault, a monorepo) | **adopt many**: run *adopt* or *new* per project, then write `PROJECTS.md` |
+| A project that already has a marked `PROJECT.md` | already set up → offer to review its settings instead |
+
+Confirm the folder and the mode in one sentence before anything else.
+
+## 2. Look around (read-only, a few seconds)
+
+- `README`, package/build files, `git log --oneline -15` (if git): what the project is, and its check command (tests, lint, build).
+- **Existing notes**, by name *and* by content (read only the first lines):
+  - resume / handoff / status notes: `HANDOFF.md`, `STATUS.md`, `NOTES.md`, `Devam Notu.md`, `Continue.md`, "where we are"-style notes;
+  - backlog: `TODO.md`, `TASKS.md`, `BACKLOG.md`, `Backlog/`, `ROADMAP.md`;
+  - decisions: `DECISIONS.md`, `docs/decisions/`, `docs/adr/`, `adr/`, folders named like "Decisions" or "Kararlar";
+  - logs: daily/weekly report folders, `CHANGELOG.md` (only as a source, never as the daily log);
+  - knowledge: `docs/`, `research/`, meeting/interview notes, numbered folders like `02 Research/`;
+  - settings that other skills use (a "project settings" note, `AGENTS.md`, `CLAUDE.md`): read, never change.
+- **Obsidian:** a `.obsidian/` folder in or above it means a vault.
+- **Name clashes:** if a `notes/` folder or a `PROJECT.md` already exists **without** the marker, it is the user's. Do not write into it; choose another notes folder (`.mph/` by default, or what the user prefers).
+
+## 3. Show one screen
+
+Show what you found and what you propose, in this shape (adapt the wording to the user's language):
+
+```
+🧭 recipe-app: Next.js app, tests with `npm test`, git repo.
+
+Found notes, I'd use them where they are (nothing moves or gets renamed):
+  resume note  → docs/STATUS.md
+  backlog      → TODO.md
+  decisions    → docs/adr/            (ADR files, kept as they are)
+  knowledge    → docs/research/
+New, in .mph/ (notes/ is already used for something else):
+  PROJECT.md (settings) · daily/ · SUGGESTIONS.md
+
+A few choices (Enter keeps the default):
+  1. Modules: knowledge ✓ · profile ✓ · suggestions ✓ · obsidian ✗
+  2. Push after each handoff? no
+  3. Your working-style notes stay on this computer only? yes
+  4. Anything I must never do here? (e.g. "never touch dist/")
+  5. Safety guard (blocks deleting files, rewriting git history, reading .env)? set up / skip
+
+OK?
+```
+
+- **Only ask what you could not work out.** If there is no Obsidian vault, do not mention Obsidian. If the guard is already set up on this machine, skip question 5.
+- In **adopt many**, show one compact block per project (found notes + proposal) and let the user accept all, or skip or change single projects.
+- The user can correct any line ("decisions are in `01 Kararlar/`").
+
+## 4. Write (after OK)
+
+1. **`PROJECT.md`** in the notes folder, from `templates/PROJECT.md`. **First line: `<!-- mph:project <name> -->`.** Fill `## Paths` with the adopted files (paths relative to the notes folder, e.g. `../TODO.md`), `## Modules`, check command, push, "Never" list, and the existing folders as decision and knowledge maps.
+2. **Only the files that do not exist yet**, from `templates/`: a resume note if none was adopted (filled from what you learned; "Next steps" left for the user), backlog, decisions, `daily/_template.md`. Never overwrite or move an existing file.
+3. **Adopted files keep their format.** Skills write into them following the style they already have (headings, language, numbering), and add only what they need.
+4. **Profile:** unless the user chose to share it, append `<notes folder>/working-style*.md` to the project's `.gitignore` (append only; create the file if missing).
+5. **adopt many:** write `PROJECTS.md` in the parent folder (one line per project; append only if it exists).
+6. **Guard:** if the user said "set up", follow the `mph-guard` skill.
+7. Commit the new files if the project is a git repo (only the files this skill created or changed).
+
+## 5. Finish
+
+One short report: what was adopted, what was created and where, what was left untouched. Then: "From now on: `mph-resume` to start, `mph-handoff` to end, `mph-menu` for the rest."
 
 ## Rules
 
-- Never delete or overwrite. Only create missing files.
-- No secrets in notes (passwords, keys, tokens, real customer data).
+- Never move, rename, delete or reformat the user's files. Adopting means **mapping**, not migrating.
+- Never write into a file or folder that is not mapped in a marked `PROJECT.md`.
+- Ask at most one screen of questions; everything else has a default the user can change later in `PROJECT.md`.

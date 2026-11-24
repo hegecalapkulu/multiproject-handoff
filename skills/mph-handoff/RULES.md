@@ -1,22 +1,32 @@
-<!-- multiproject-handoff RULES v0.1.0 -->
+<!-- multiproject-handoff RULES v0.2.0 -->
 # multiproject-handoff: shared rules
 
 Every `mph-*` skill follows these rules. They are kept in one file so every skill, in every tool, applies them the same way.
 
 ## 1. Finding projects
 
-A **project** is any folder that contains `notes/RESUME.md`. Find projects in this order:
+A project is recognized by its **marker**, never by a file name: a `PROJECT.md` whose **first line** is
+
+```
+<!-- mph:project <name> -->
+```
+
+The folder that holds this `PROJECT.md` is the project's **notes folder**. Its name is free (`notes/`, `.mph/`, `00 Notes/`…). Wherever a skill says `notes/…`, it means "inside the notes folder". Every path written in `PROJECT.md` is relative to the notes folder, unless it starts with `/` or `~`.
+
+Find projects in this order:
 
 1. **A `PROJECTS.md` list**, in the working folder or else in `~/.handoff/PROJECTS.md`. It lists projects that live anywhere on disk:
    ```markdown
    - recipe-app: ~/code/recipe-app
    - landing-page: ~/clients/acme/landing-page
    ```
-   Each path is the folder that holds `notes/`. Relative paths are relative to the `PROJECTS.md` file. Use the listed name.
-2. **Otherwise, scan below the working folder:** `*/notes/RESUME.md` and `*/*/notes/RESUME.md` (skip `node_modules`, `.git`, `vendor`, `dist`, `build`).
-3. **The working folder itself** is a project if it has `notes/RESUME.md`.
+   Each path is a project folder; look inside it (up to two levels) for the marked `PROJECT.md`. Relative paths are relative to the `PROJECTS.md` file.
+2. **Otherwise, scan below the working folder** for files named `PROJECT.md` up to four levels deep (skip `node_modules`, `.git`, `vendor`, `dist`, `build`, `.obsidian`) and keep only those whose first line is the marker.
+3. **The working folder itself** counts if it contains a marked `PROJECT.md` (directly or in a direct subfolder).
 
-A project's code does not have to sit next to its notes: the `Code` row in `notes/PROJECT.md` says where the code is. Run checks and git commands there.
+**Never treat a file as ours because of its name.** A `RESUME.md`, `BACKLOG.md`, `notes/` folder or `PROJECT.md` without the marker belongs to the user or another tool: do not read it as project notes and never write into it, unless the marked `PROJECT.md` maps it explicitly (that is how existing files are adopted).
+
+A project's code does not have to sit next to its notes: the `Code` row in `PROJECT.md` says where the code is. Run checks and git commands there.
 
 ## 2. The active project
 

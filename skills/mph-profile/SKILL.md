@@ -68,7 +68,7 @@ The general profile uses the same shape with the headings **Communication**, **F
 ### When updating (called by `mph-handoff`, or when the user states a preference)
 1. Use the **active project** (RULES.md §2).
 2. Was there something **new and clearly observed** about how the user works? If not, touch nothing.
-3. Decide the layer: domain knowledge, detail, pace and roles → project. Language, tone, format, approvals → still **project first** (rule 1), unless the same item already sits in another project's profile → promote (rule 2). To check, find the other projects as in RULES.md §1 and read only the item lines of their `notes/working-style*.md`.
+3. Decide the layer: domain knowledge, detail, pace and roles → project. Language, tone, format, approvals → still **project first** (rule 1), unless the same item already sits in another project's profile → promote (rule 2). To check, find the other projects as in RULES.md §1 and read only the item lines of the `working-style*.md` files in their notes folders.
 4. Read the target file, then add, update or remove items. Keep the length limits.
 5. **Always say what changed**, one line per item: `🧭 [recipe-app] profile added: "explain database steps, fast on frontend"`.
 

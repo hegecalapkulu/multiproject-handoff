@@ -47,6 +47,8 @@ recipe-app/
 
 ## Where the files live
 
+> **How projects are recognized:** by a marker on the first line of `PROJECT.md` (`<!-- mph:project <name> -->`), never by file names. The folder holding that `PROJECT.md` is the notes folder, whatever its name; paths in `PROJECT.md` are relative to it, so existing files anywhere in the project can be adopted (`../TODO.md`, `../docs/adr/`).
+
 The notes always live in a `notes/` folder **inside each project**, so they are versioned with the code. How you arrange the projects is up to you. Pick one of three layouts:
 
 **1. One parent folder (simplest).** All projects under one folder. Open your AI tool there; `mph-resume` finds every `*/notes/RESUME.md` up to two levels deep.

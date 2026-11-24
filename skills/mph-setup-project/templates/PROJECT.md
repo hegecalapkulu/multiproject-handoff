@@ -1,36 +1,37 @@
-# Project settings
+<!-- mph:project <name> -->
+# Project settings: <name>
 
-> Every mph-* skill reads this file first.
-> Anything written here overrides their defaults. Remove the lines you don't need.
+> Every mph-* skill reads this file first. The first line marks this folder as the project's notes folder; keep it.
+> Paths below are relative to this folder. Anything written here overrides the skills' defaults. Remove the lines you don't need.
 
 ## Modules
 - knowledge: on <!-- research, competitors, interviews… filed into topics -->
 - profile: on <!-- working-style notes; see "Working style" below -->
 - suggestions: on <!-- one "want a skill for this?" question per handoff -->
-- obsidian: off <!-- links, tags and notes/_map.md for Obsidian -->
+- obsidian: off <!-- links, tags and _map.md for Obsidian -->
 
 ## Paths
 
 | What | Where |
 |---|---|
-| Code | `.` <!-- the folder with the code; change it if your notes live apart from the code --> |
-| Resume note | `notes/RESUME.md` |
-| Daily logs | `notes/daily/YYYY-MM-DD.md` · template: `notes/daily/_template.md` |
-| Backlog | `notes/BACKLOG.md` (open work only) |
-| Decisions | `notes/DECISIONS.md` |
+| Code | `..` <!-- the folder with the code; change it if your notes live apart from the code --> |
+| Resume note | `RESUME.md` <!-- or an adopted file, e.g. `../docs/STATUS.md` --> |
+| Daily logs | `daily/YYYY-MM-DD.md` · template: `daily/_template.md` |
+| Backlog | `BACKLOG.md` (open work only) |
+| Decisions | `DECISIONS.md` |
 
 ## Check
 - Healthy when: `<your test / lint / build command>` passes.
 - Quick check for `mph-resume` (optional, should take seconds): `<command>`
 
 ## Decisions (which decision goes where)
-- Everything → `notes/DECISIONS.md`
-- <!-- Bigger projects: e.g. pricing → notes/decisions/pricing.md, architecture → docs/architecture.md -->
+- Everything → `DECISIONS.md`
+- <!-- Bigger projects: e.g. pricing → decisions/pricing.md, architecture → ../docs/architecture.md -->
 
 ## Knowledge map
 <!-- Research, competitors, interviews, strategy… Topics are added here as the project grows
      (the knowledge skill proposes them; you approve). Any names, any language, any location. -->
-- <!-- e.g. Competitors → notes/knowledge/competitors.md -->
+- <!-- e.g. Competitors → knowledge/competitors.md -->
 
 ## Structure rules (optional)
 <!-- How you like your notes organized. Every skill follows these. Examples:
@@ -50,15 +51,15 @@
 <!-- Added by suggest-agent when you approve one. One line each, with the file path. -->
 
 ## Working style
-- Profile: local <!-- local: notes/working-style*.md is git-ignored (default) · committed: shared with the notes -->
+- Profile: local <!-- local: working-style*.md is git-ignored (default) · committed: shared with the notes -->
 
 ## Obsidian
 - Links: markdown <!-- markdown (also works on GitHub) | wikilinks -->
-- Canvas: off <!-- on: also keep notes/map.canvas up to date -->
+- Canvas: off <!-- on: also keep map.canvas up to date -->
 
 
 ## Commit / backup
-- Handoff commits `notes/` and finished work. Push: `no` <!-- yes / no -->
+- Handoff commits the notes and finished work. Push: `no` <!-- yes / no -->
 
 ## Never
 - <!-- e.g. "never touch the production database", "never edit generated files in dist/" -->

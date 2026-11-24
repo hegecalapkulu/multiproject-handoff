@@ -23,11 +23,11 @@ Read as little as possible, but the right things. This skill changes no files.
 - **Otherwise**, find projects (RULES.md §1):
   - the working folder is a project, or exactly one project is found → use it, and name it in one line;
   - several → show the **dashboard** and wait for the pick;
-  - none → "No project notes found here." and offer `mph-setup-project`.
+  - none → "No project notes found here." and offer `mph-setup-project` (it can also adopt notes you already have).
 
 ### The dashboard
 
-For each project read **only the first ~15 lines** of `RESUME.md` and **only the first item** under `## Now` in `BACKLOG.md`. Nothing else yet. Sort by "Last updated", newest first:
+For each project read **only**: the marker line and the `## Paths` table of its `PROJECT.md` (to find its resume note and backlog, which may have any name), the first ~15 lines of the resume note, and the first item under `## Now` (or the first open section) of the backlog. Nothing else yet. The name shown is the one in the marker. Sort by "Last updated", newest first:
 
 ```
 🧭 3 projects
@@ -51,7 +51,7 @@ The chosen project becomes the active project.
 ## 2. Load the project
 
 1. `notes/PROJECT.md` (settings, maps, modules).
-2. `notes/RESUME.md` in full.
+2. The resume note in full (path from `PROJECT.md`; default `RESUME.md` in the notes folder).
 3. Only the `## Now` section of `BACKLOG.md`.
 4. If the **profile** module is on: `~/.handoff/working-style.md` and the project's `notes/working-style*.md`. Apply them quietly; do not recite them.
 5. Note the **knowledge map** in `PROJECT.md` (topic names only). Open a topic file later, only when the work needs it.

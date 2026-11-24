@@ -20,7 +20,7 @@ Principle: **do only what this session produced, and read a step's detailed rule
 ## 1. Which project?
 
 - `mph-handoff <name>` → that project. Otherwise the **active project** (RULES.md §2), without asking again.
-- No active project → follow RULES.md §2. If work happened in a folder without notes, ask: "New project (`mph-setup-project`), or part of an existing one?" A one-off question with nothing to save → say so and stop.
+- No active project → follow RULES.md §2. If work happened in a folder without a marked `PROJECT.md`, ask: "New project (`mph-setup-project` can set it up or adopt its existing notes), or part of an existing one?" A one-off question with nothing to save → say so and stop.
 - If the session also touched **another** project, say so and ask: "Hand off both, or only <active>?" For both, run the steps once per project, each into its own notes.
 
 ## 2. Quick mode
