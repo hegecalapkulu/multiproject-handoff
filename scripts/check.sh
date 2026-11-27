@@ -89,4 +89,12 @@ G=$(mktemp -d); cp -R examples/workspace/cli-tool "$G/app"
 (cd "$G/app" && git init -q && git add -A && git -c user.name=t -c user.email=t@t commit -qm init && echo 1 > a.rs && git add a.rs && git -c user.name=t -c user.email=t@t commit -qm "Add feature")
 (cd "$G" && python3 "$ROOT/shared/mph-scan.py" | grep -q "since note: 1 commit (latest: Add feature)") || { echo "scanner missed work after the note"; fail=1; }
 (cd examples/workspace && ! python3 ../../shared/mph-scan.py | grep -q "NOT HANDED OFF") || { echo "scanner flagged the examples as not handed off"; fail=1; }
+# translations: every README.<lang>.md is listed in the English language line; warn when one lags behind
+for t in README.*.md; do
+  [ -f "$t" ] || continue
+  grep -q "href=\"$t\"" README.md || { echo "translation not linked from README.md: $t"; fail=1; }
+  tv=$(sed -n '1s/.*README v\([0-9.]*\).*/\1/p' "$t")
+  pv=$(python3 -c 'import json;print(json.load(open(".claude-plugin/plugin.json"))["version"])')
+  [ "$tv" = "$pv" ] || echo "note: $t is a translation of v${tv:-?}, README is v$pv (update it when you can)"
+done
 [ "$fail" -eq 0 ] && echo "all checks passed" || { echo "checks failed"; exit 1; }

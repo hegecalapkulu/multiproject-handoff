@@ -7,12 +7,14 @@ One dashboard for all your projects. Notes that grow with each project. An agent
 
 <p align="center">
 <a href="https://github.com/hegecalapkulu/multiproject-handoff/actions/workflows/check.yml"><img src="https://github.com/hegecalapkulu/multiproject-handoff/actions/workflows/check.yml/badge.svg" alt="tests"></a>
-<img src="https://img.shields.io/badge/version-0.8.0-blue" alt="version 0.8.0">
+<img src="https://img.shields.io/badge/version-0.8.1-blue" alt="version 0.8.1">
 <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
 <img src="https://img.shields.io/badge/format-Agent%20Skills%20(SKILL.md)-orange" alt="Agent Skills">
 <img src="https://img.shields.io/badge/tested%20with-Claude%20Code%20·%20Codex-brightgreen" alt="tested with Claude Code and Codex">
 <img src="https://img.shields.io/badge/also%20reads%20it-Gemini%20·%20Antigravity%20·%20Cursor%20·%20Copilot-lightgrey" alt="other tools">
 </p>
+
+<p align="center"><b>English</b> · <a href="README.es.md">Español</a> · <a href="README.zh.md">中文</a> · <a href="README.pt.md">Português</a> · <a href="README.tr.md">Türkçe</a></p>
 
 <p align="center"><img src="docs/demo.gif" alt="Hand off in Claude Code, resume the next day in Codex: same notes, any tool" width="820"><br>
 <sub><code>recipe-app</code> is one of the made-up sample projects in <a href="examples/workspace/"><code>examples/workspace/</code></a>. Try the same thing yourself there.</sub></p>
@@ -218,7 +220,7 @@ Most tools in this space keep **one handoff file for one project**, or a memory 
 
 ## Contributing
 
-Issues and PRs welcome, especially confirmed skill-folder paths for more tools, `PROJECT.md` examples for different stacks, and changes that make `mph-resume` read *less*. After editing `shared/`, run `scripts/sync.sh`; before a PR, run `scripts/check.sh`.
+Issues and PRs welcome, especially confirmed skill-folder paths for more tools, `PROJECT.md` examples for different stacks, and changes that make `mph-resume` read *less*. After editing `shared/`, run `scripts/sync.sh`; before a PR, run `scripts/check.sh`. Translations of this README (`README.<lang>.md`) are welcome too: change the version in their first line when you bring one up to date.
 
 ## License
 

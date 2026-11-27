@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1 (2026-11-27)
+
+- **README in five languages:** English, Español, 中文, Português and Türkçe, linked from a language line at the top of each. Only the README is translated; the detailed docs stay in English. Each translation says the English README is the source and may run ahead of it, and `check.sh` warns (without failing) when a translation is older than the current version.
+
 ## 0.8.0 (2026-11-27)
 
 - **Missed handoffs are caught.** If a session ended without `mph-handoff`, the next `mph-resume` notices: commits or unsaved changes in the project folder after the last handoff (or, without git, files changed after the note). The dashboard flags it as **⚠ not handed off**, and on loading the project the agent offers to catch the resume note up from git. The catch-up writes only from commit messages and the diff, marks the note `(caught up from git)` and commits only the notes. Only that project's folder counts, so one repo can hold several projects. Tested in `check.sh`.
