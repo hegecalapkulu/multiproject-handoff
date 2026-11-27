@@ -14,7 +14,7 @@ description: Start an AI coding session (any agent) from the project notes inste
 > If it was found by searching, use it and tell the user where, offering to copy it back to `~/.handoff/`. If it is nowhere, say so and suggest re-running `install.sh`. Never guess the rules.
 <!-- mph:lookup:end -->
 
-Read as little as possible, but the right things. This skill changes no files.
+Read as little as possible, but the right things. This skill changes no files itself (a catch-up the user says yes to runs `mph-handoff quick`).
 
 ## 1. Which project?
 
@@ -47,6 +47,7 @@ Which one? (number or name)
 
 - One line of state, one line of "Now". **All labels in the user's language** ("Şimdi:", "güncellendi", "Hangisi?"); the shape above is only an example.
 - **⚠ stale** when the note is older than 14 days (or the number in that project's `PROJECT.md`).
+- **⚠ not handed off** when the scanner prints a `since note:` line (work after the last handoff), e.g. `⚠ not handed off: 2 commits`. By hand: in a git repo, commits in the project folder newer than the note.
 - No "Last updated" line → "date unknown".
 
 The chosen project becomes the active project.
@@ -64,6 +65,7 @@ The chosen project becomes the active project.
 5. Note the **knowledge map** in `PROJECT.md` (topic names only). Open a topic file later, only when the work needs it.
 6. Quick health check, only if `PROJECT.md` defines one.
 7. **Drift check:** in a git repo, if there are commits newer than the note's "Last updated", say so in one line.
+8. **Missed handoff:** the scanner prints `=== NOT HANDED OFF` when work happened after the note (commits or unsaved changes in the project folder, or, without git, files changed after the note). By hand: `git log` and `git status` in the code folder, limited to the project folder.
 
 Do **not** read daily logs, decision files, topic files or code now.
 
@@ -77,5 +79,9 @@ Open questions: <if any>
 Next step: <from the notes>
 Continue with that, or something else?
 ```
+
+**If the last session was not handed off** (step 2.8), add one line before the question, in the user's language:
+`⚠ The last session ended without a handoff (2 commits, latest: "Add remove item"). Catch the note up from git first? (yes / no)`
+On yes, run `mph-handoff quick` with the git facts as the source (commit messages and the diff, not memory), and add `(caught up from git)` after the date line so the next reader knows it was reconstructed. Then answer as above from the new note. On no, go on with the old note and do not ask again this session.
 
 (Labels in the user's language.) **Hard limit: 8 lines, no extra paragraphs.** Each field is one line; drop empty fields. If the health check could not run, add at most one short line saying so. Do not explain which files you read or that the working style was loaded; just apply it.

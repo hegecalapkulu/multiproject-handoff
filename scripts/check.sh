@@ -30,7 +30,7 @@ n=$(ls "$T/.claude/skills" | wc -l | tr -d ' '); [ "$n" -eq "$(ls skills | wc -l
 [ -f "$T/.handoff/RULES.md" ] || { echo "installer did not place ~/.handoff/RULES.md"; fail=1; }
 [ -f "$T/.handoff/mph-context.py" ] || { echo "installer did not place the context hint"; fail=1; }
 [ -f "$T/.handoff/mph-guard.py" ] || { echo "installer did not place the guard script"; fail=1; }
-(cd examples/workspace && python3 ../../shared/mph-scan.py | grep -q "^PROJECTS 3") || { echo "scanner did not find the 3 example projects"; fail=1; }
+(cd examples/workspace && python3 ../../shared/mph-scan.py | grep -q "^PROJECTS 4") || { echo "scanner did not find the 4 example projects"; fail=1; }
 python3 scripts/test-guard.py >/dev/null || { echo "guard tests failed (run scripts/test-guard.py)"; fail=1; }
 for p in examples/workspace/*/; do
   find "$p" -maxdepth 3 -name PROJECT.md -exec head -1 {} \; | grep -q '^<!-- mph:project ' || { echo "example without marked PROJECT.md: $p"; fail=1; }
@@ -70,4 +70,23 @@ printf 'model_advice=off\ncontext_hint_auto=off\n' > "$C/g.conf"
 IN2="{\"session_id\":\"s2\",\"transcript_path\":\"$C/projects/p/s.jsonl\"}"
 OUT2=$(echo "$IN2" | MPH_GUARD_CONF="$C/g.conf" MPH_CONTEXT_STATE="$C/st2.json" python3 guard/mph-context.py)
 [ -z "$OUT2" ] || { echo "context_hint_auto=off still learned"; fail=1; }
+# handoff reminder: counts file edits since the last handoff, fires once
+python3 - "$C/w.jsonl" <<'PY3'
+import json, sys
+L = [{"type": "assistant", "message": {"model": "m", "usage": {"input_tokens": 1}, "content": [{"type": "tool_use", "name": "Edit", "input": {}}]}}] * 3
+L.append({"type": "user", "message": {"role": "user", "content": "<command-name>/mph-handoff</command-name>"}})
+L += [{"type": "assistant", "message": {"model": "m", "usage": {"input_tokens": 1}, "content": [{"type": "tool_use", "name": "Write", "input": {}}]}}] * 2
+open(sys.argv[1], "w").write("\n".join(json.dumps(x) for x in L) + "\n")
+PY3
+IN3="{\"session_id\":\"w\",\"transcript_path\":\"$C/w.jsonl\"}"
+printf 'model_advice=off\nhandoff_reminder_edits=3\n' > "$C/w.conf"
+[ -z "$(echo "$IN3" | MPH_GUARD_CONF="$C/w.conf" MPH_CONTEXT_STATE="$C/w1.json" python3 guard/mph-context.py)" ] || { echo "handoff reminder ignored the handoff"; fail=1; }
+printf 'model_advice=off\nhandoff_reminder_edits=2\n' > "$C/w.conf"
+echo "$IN3" | MPH_GUARD_CONF="$C/w.conf" MPH_CONTEXT_STATE="$C/w2.json" python3 guard/mph-context.py | grep -q "2 file edits" || { echo "handoff reminder did not fire"; fail=1; }
+[ -z "$(echo "$IN3" | MPH_GUARD_CONF="$C/w.conf" MPH_CONTEXT_STATE="$C/w2.json" python3 guard/mph-context.py)" ] || { echo "handoff reminder fired twice"; fail=1; }
+# missed handoff: the scanner flags work after the note, only in that project's folder
+G=$(mktemp -d); cp -R examples/workspace/cli-tool "$G/app"
+(cd "$G/app" && git init -q && git add -A && git -c user.name=t -c user.email=t@t commit -qm init && echo 1 > a.rs && git add a.rs && git -c user.name=t -c user.email=t@t commit -qm "Add feature")
+(cd "$G" && python3 "$ROOT/shared/mph-scan.py" | grep -q "since note: 1 commit (latest: Add feature)") || { echo "scanner missed work after the note"; fail=1; }
+(cd examples/workspace && ! python3 ../../shared/mph-scan.py | grep -q "NOT HANDED OFF") || { echo "scanner flagged the examples as not handed off"; fail=1; }
 [ "$fail" -eq 0 ] && echo "all checks passed" || { echo "checks failed"; exit 1; }

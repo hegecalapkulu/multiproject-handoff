@@ -7,7 +7,7 @@ One dashboard for all your projects. Notes that grow with each project. An agent
 
 <p align="center">
 <a href="https://github.com/hegecalapkulu/multiproject-handoff/actions/workflows/check.yml"><img src="https://github.com/hegecalapkulu/multiproject-handoff/actions/workflows/check.yml/badge.svg" alt="tests"></a>
-<img src="https://img.shields.io/badge/version-0.7.1-blue" alt="version 0.7.1">
+<img src="https://img.shields.io/badge/version-0.8.0-blue" alt="version 0.8.0">
 <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
 <img src="https://img.shields.io/badge/format-Agent%20Skills%20(SKILL.md)-orange" alt="Agent Skills">
 <img src="https://img.shields.io/badge/tested%20with-Claude%20Code%20·%20Codex-brightgreen" alt="tested with Claude Code and Codex">
@@ -32,7 +32,9 @@ One dashboard for all your projects. Notes that grow with each project. An agent
 Which one? (number or name)
 ```
 
-`multiproject-handoff` is a set of plain-Markdown [Agent Skills](https://agentskills.io) that end every AI coding session with a clean handoff and start the next one from a short note instead of from scratch, **across all your projects**. No server, no database, no account: just Markdown files next to your code.
+**In plain words:** your AI assistant forgets everything when you close the chat. This leaves it a short note at the end of each session and reads it back at the start of the next one, for every project you have, so you never explain again where you were. Nothing to sign up for: the notes are ordinary text files on your computer.
+
+Under the hood, `multiproject-handoff` is a set of plain-Markdown [Agent Skills](https://agentskills.io) that end every AI coding session with a clean handoff and start the next one from a short note instead of from scratch, **across all your projects**. No server, no database, no account: just Markdown files next to your code.
 
 **Works best with Claude Code and Codex.** Both are tested end to end, including a handoff in one and a resume in the other. It is built on the open Agent Skills format, so it is highly compatible with other tools that read Agent Skills or `AGENTS.md` (Gemini CLI, Antigravity, Cursor, Copilot, Windsurf…). Minor differences in how a tool handles a step may occasionally come up; reports are welcome.
 
@@ -42,7 +44,7 @@ Which one? (number or name)
 2. **Set up each project** (once). Open it and run `/mph-setup-project`. It reads the project, asks a few questions, and keeps the notes you already have.
 3. **Every session:** `/mph-resume` at the start, `/mph-handoff` at the end.
 
-That's all you need. Forgot step 2? Any `mph-` command notices and offers to set the project up first. Everything below runs on its own during a handoff or when you ask; `/mph-menu` lists it all.
+That's all you need. Forgot step 3? If a session ends without a handoff, the next `/mph-resume` notices the unsaved work and offers to catch the note up from git. Forgot step 2? Any `mph-` command notices and offers to set the project up first. Everything below runs on its own during a handoff or when you ask; `/mph-menu` lists it all.
 
 ## What else can it do?
 
@@ -57,6 +59,10 @@ That's all you need. Forgot step 2? Any `mph-` command notices and offers to set
 | See it all as a graph | `mph-obsidian-map` | linked notes, map notes and a Canvas in Obsidian ([more](docs/obsidian.md)) |
 
 Forgot a command? **`mph-menu`** shows them all.
+
+## Not writing code?
+
+It works the same for a thesis, a research project, a book, client work or anything else you do with an AI assistant over many sessions. Decisions, sources, interviews and "where was I" are exactly what it keeps. You don't need git or tests: the notes are written either way, and the handoff offers version history once, in one line, which you can turn down for good. See the [`thesis` example](examples/workspace/thesis/).
 
 ## Quick start
 
@@ -82,7 +88,7 @@ cd multiproject-handoff
 ./install.sh        # finds the AI tools on this machine and installs for each
 ```
 
-**Try it in one minute:** open your AI tool in [`examples/workspace/`](examples/workspace/) (three filled-in projects) and run `/mph-resume`.
+**Try it in one minute:** open your AI tool in [`examples/workspace/`](examples/workspace/) (four filled-in projects, one of them a thesis) and run `/mph-resume`.
 
 **Use it on your project:** open the project (or a whole folder or Obsidian vault of projects) and run `/mph-setup-project`. It looks around first: notes you already keep (`TODO.md`, `docs/adr/`, a status note, research folders…) are **adopted where they are**, and it asks only what it can't work out, on one screen. From then on: `/mph-resume` to start a session, `/mph-handoff` to end one. In tools without slash commands, just say "resume" or "handoff".
 
@@ -110,6 +116,8 @@ recipe-app/notes/
 ├── daily/              append-only log
 └── working-style.md    how you like to work here (git-ignored by default)
 ```
+
+**Public repo, or notes you'd rather keep private?** The notes don't have to live next to the code: keep them in a private folder or an Obsidian vault and point to the code from `PROJECT.md` ([how](docs/how-it-works.md#where-the-files-live)). Working in a team? See [Using it in a team](docs/team.md).
 
 **Projects are recognized by a marker, not by file names.** The first line of `PROJECT.md` (`<!-- mph:project recipe-app -->`) marks the notes folder, so a `RESUME.md` that is really your CV, or a `notes/` folder full of meeting notes, is never mistaken for ours. The notes folder can have any name (`notes/`, `.mph/`, `00 Notes/`). See [`examples/workspace/landing-page/`](examples/workspace/landing-page/): an adopted project whose own `notes/` folder is left alone.
 
@@ -192,10 +200,11 @@ Restart your tools afterwards. When you are sure, delete `~/.handoff-removed/` y
 - **You decide.** New topics, splits, skills and agents are proposals until you say yes.
 - **No secrets in notes**, and your working-style profile stays on your computer unless you choose otherwise.
 - **Want it enforced, not just promised?** `mph-guard` turns these rules into a hook that blocks the action before it runs.
+- **No network, no account, no telemetry.** Exactly what it reads, writes and changes on your machine: [Security overview](docs/security.md).
 
 ## Is it for you?
 
-**Yes**, if you work on several projects with AI agents, switch between tools, or keep losing decisions and research between sessions.
+**Yes**, if you work on several projects with AI agents, switch between tools, or keep losing decisions and research between sessions. That includes non-code work: a thesis, research, writing, client projects.
 
 **Probably not**, if you have one small project and short sessions (your tool's built-in memory is enough), if you want memory that is fully automatic and invisible (this one shows you everything and asks before changing structure), or if your team already has a documentation system it is happy with.
 
@@ -205,7 +214,7 @@ Most tools in this space keep **one handoff file for one project**, or a memory 
 
 ## Documentation
 
-[How it works](docs/how-it-works.md) · [Notes that grow](docs/knowledge.md) · [Working-style profile](docs/profile.md) · [Suggestions](docs/suggestions.md) · [Obsidian](docs/obsidian.md) · [Install](docs/install.md) · [Comparison & FAQ](docs/comparison.md) · [Changelog](CHANGELOG.md)
+[How it works](docs/how-it-works.md) · [Security](docs/security.md) · [Teams](docs/team.md) · [Notes that grow](docs/knowledge.md) · [Working-style profile](docs/profile.md) · [Suggestions](docs/suggestions.md) · [Obsidian](docs/obsidian.md) · [Install](docs/install.md) · [Comparison & FAQ](docs/comparison.md) · [Changelog](CHANGELOG.md)
 
 ## Contributing
 

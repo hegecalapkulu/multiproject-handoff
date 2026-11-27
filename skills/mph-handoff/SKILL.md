@@ -27,6 +27,8 @@ Principle: **do only what this session produced, and read a step's detailed rule
 
 `mph-handoff quick` (or "quick handoff"): rewrite the resume note (step 5.5), commit (step 6), report. Nothing else. Use it when the user just wants to leave.
 
+**Catch-up** (started by `mph-resume` when the last session ended without a handoff): the same quick mode, but the session's work is not in this conversation, so write the resume note only from `mph-scan.py facts` (commit messages, the diff, uncommitted files), never from guesses, and mark the date line `(caught up from git)`. Commit **only the notes**: uncommitted code belongs to the user, so list it in the report instead.
+
 ## 3. Gather facts, then show the plan
 
 1. **Facts from the repo, not from memory.** Fast path: `python3 <this skill's folder>/mph-scan.py facts <name>` (git status, diff summary, commits since the resume note, branch and remote, in one call). By hand: `git status`, `git diff --stat`, this session's `git log --oneline`. If code changed, run the check command from `PROJECT.md` (or the tests). "Tests pass" is written only if they passed now.

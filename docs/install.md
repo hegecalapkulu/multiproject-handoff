@@ -112,6 +112,8 @@ Run `mph-guard` and pick from a short checklist:
 | `context_hint_auto` | on | learn, per model, the size Claude Code auto-compacts at on this computer, and warn at 50% and 80% of it |
 | `context_hint_tokens` | 500000,800000 | fixed thresholds, used until a model's compaction size is known (or always, with `context_hint_auto=off`) |
 | `context_hint_command` | mph-handoff | the command it suggests (use your own, e.g. `/devir`) |
+| `handoff_reminder` | on | after a lot of work with no handoff, the agent reminds you once before you close the window |
+| `handoff_reminder_edits` | 20 | how many file edits since the last handoff count as "a lot" |
 | `model_advice` | on | before a clearly simple task on a large model, the agent offers once to switch to a lighter one; you decide |
 
 Choices live in `~/.handoff/guard.conf`; change them any time by running `mph-guard` again. Registering the hook is shown to you first and needs your yes; existing hooks are never removed. Other tools (Codex, Gemini CLI, Cursor) have their own approval or sandbox settings; use those there.

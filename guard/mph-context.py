@@ -25,6 +25,12 @@ the fixed `context_hint_tokens` from ~/.handoff/guard.conf are used, default
 `context_hint_command` sets the command it suggests (default mph-handoff;
 use your own, e.g. /devir, if you hand off differently).
 
+**Handoff reminder:** it also counts the file edits (Edit, Write, MultiEdit,
+NotebookEdit) since the last handoff in this session. When they reach
+`handoff_reminder_edits` (default 20), it asks the agent once to suggest a
+handoff at a natural stopping point, so a long working session is not lost
+when the window is simply closed. `handoff_reminder=off` disables it.
+
 Registered by the mph-guard skill (after asking) under hooks.UserPromptSubmit:
   { "hooks": [ { "type": "command", "command": "python3 ~/.handoff/mph-context.py" } ] }
 """
@@ -39,7 +45,8 @@ STATE = os.environ.get("MPH_CONTEXT_STATE", os.path.join(HOME, "context-state.js
 
 def conf():
     c = {"context_hint": "on", "context_hint_tokens": "500000,800000", "model_advice": "on",
-         "context_hint_command": "mph-handoff", "context_hint_auto": "on"}
+         "context_hint_command": "mph-handoff", "context_hint_auto": "on",
+         "handoff_reminder": "on", "handoff_reminder_edits": "20"}
     try:
         for line in open(CONF, encoding="utf-8"):
             line = line.split("#", 1)[0].strip()
@@ -51,10 +58,24 @@ def conf():
     return c
 
 
-def read_transcript(path):
+EDIT_TOOLS = {"Edit", "Write", "MultiEdit", "NotebookEdit"}
+
+
+def is_handoff(item, cmd):
+    """A user message naming the handoff command, or the agent starting it as a skill."""
+    name = cmd.lstrip("/")
+    if item.get("type") == "tool_use" and item.get("name") == "Skill":
+        return name in str((item.get("input") or {}).get("skill", ""))
+    if item.get("type") == "text":
+        return name in item.get("text", "")
+    return False
+
+
+def read_transcript(path, cmd="mph-handoff"):
     """One pass over a transcript: the context size of the latest model call, the
-    latest model name, and the auto-compactions seen ({model: tokens before it})."""
-    size, model, compactions = 0, "", {}
+    latest model name, the auto-compactions seen ({model: tokens before it}) and
+    the file edits since the last handoff."""
+    size, model, compactions, edits = 0, "", {}, 0
     try:
         with open(path, encoding="utf-8", errors="replace") as f:
             for line in f:
@@ -70,14 +91,27 @@ def read_transcript(path):
                             and isinstance(pre, int) and pre > 20000 and model):
                         compactions[model] = pre
                     continue
-                if '"usage"' not in line:
+                if '"usage"' not in line and '"type":"user"' not in line.replace(" ", ""):
                     continue
                 try:
-                    msg = json.loads(line).get("message") or {}
+                    entry = json.loads(line)
                 except ValueError:
                     continue
+                msg = entry.get("message") or {}
                 if not isinstance(msg, dict):
                     continue
+                content = msg.get("content")
+                if isinstance(content, str):
+                    content = [{"type": "text", "text": content}]
+                if isinstance(content, list):
+                    for item in content:
+                        if not isinstance(item, dict):
+                            continue
+                        # only what the user typed counts as a handoff request, not hook notes
+                        if is_handoff(item, cmd) and (entry.get("type") == "user" or item.get("type") == "tool_use"):
+                            edits = 0
+                        elif item.get("type") == "tool_use" and item.get("name") in EDIT_TOOLS:
+                            edits += 1
                 if msg.get("model") and not str(msg["model"]).startswith("<"):
                     model = msg["model"]
                 u = msg.get("usage")
@@ -86,7 +120,7 @@ def read_transcript(path):
                             + u.get("cache_creation_input_tokens", 0))
     except OSError:
         pass
-    return size, model, compactions
+    return size, model, compactions, edits
 
 
 def context_size(path):
@@ -170,12 +204,33 @@ def main():
         state["advice:" + sid] = 1
         save_state(state)
         out = {"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": MODEL_ADVICE}}
+    path = data.get("transcript_path", "")
+    size, model, compactions, edits = read_transcript(path, c["context_hint_command"])
+    try:
+        need = int(c["handoff_reminder_edits"])
+    except ValueError:
+        need = 20
+    if c["handoff_reminder"] == "on" and edits >= need and not state.get("work:" + sid):
+        state["work:" + sid] = 1
+        save_state(state)
+        cmd = c["context_hint_command"]
+        note = {
+            "systemMessage": f"🧭 {edits} file edits since the last handoff. Before you close this window, `{cmd}` saves where you are.",
+            "hookSpecificOutput": {
+                "hookEventName": "UserPromptSubmit",
+                "additionalContext": (
+                    f"[multiproject-handoff] {edits} file edits since the last handoff in this session. "
+                    "Answer the user's message first. Then, once, at a natural stopping point "
+                    "(not in the middle of a task), say in one short sentence in the user's language "
+                    f"that a lot was done and {cmd} would save it for the next session. Do not repeat it.")}}
+        if out:
+            note["hookSpecificOutput"]["additionalContext"] += "\n\n" + MODEL_ADVICE
+        print(json.dumps(note))
+        sys.exit(0)
     if c["context_hint"] != "on":
         if out:
             print(json.dumps(out))
         sys.exit(0)
-    path = data.get("transcript_path", "")
-    size, model, compactions = read_transcript(path)
     learned = None
     try:
         stated = int(c.get("context_window", "0") or 0)

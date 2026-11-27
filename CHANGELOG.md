@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0 (2026-11-27)
+
+- **Missed handoffs are caught.** If a session ended without `mph-handoff`, the next `mph-resume` notices: commits or unsaved changes in the project folder after the last handoff (or, without git, files changed after the note). The dashboard flags it as **⚠ not handed off**, and on loading the project the agent offers to catch the resume note up from git. The catch-up writes only from commit messages and the diff, marks the note `(caught up from git)` and commits only the notes. Only that project's folder counts, so one repo can hold several projects. Tested in `check.sh`.
+- **Handoff reminder** (part of the `mph-guard` hooks, on by default there): after 20 file edits with no handoff in a session, the agent reminds you once, at a natural stopping point, before you close the window. A handoff resets the count. `handoff_reminder_edits` changes the number, `handoff_reminder=off` turns it off. Tested in `check.sh`.
+- **README for everyone:** a plain-words opening paragraph, a **Not writing code?** section (thesis, research, writing, client work; git is optional), and a pointer to keeping notes outside a public repo.
+- **New example: `thesis`**, a master's thesis with interviews, sources and decisions, no tests and no git setup. `examples/workspace/` now has four projects.
+- **Security overview** ([docs/security.md](docs/security.md)): what each part reads, writes and changes, no network, no telemetry, and the honest limits of instructions vs. hooks.
+- **Using it in a team** ([docs/team.md](docs/team.md)): what to share, what to keep personal, one resume note per person, and how it sits next to an issue tracker or ADRs.
+
 ## 0.7.1 (2026-11-25)
 
 - **Long-conversation note learns your window:** Claude Code records each automatic compaction with the size it happened at. The note now remembers that size per model (on its first run it also looks through recent transcripts for past compactions) and fires at **50%** of it, again at 80%. Different models, plans and settings get their own numbers. Only real "window is full" compactions count, not the app's precomputed early ones, and a learned size never stays below the longest conversation already seen for that model. Until a model has been compacted once, the fixed thresholds apply (500k, 800k). `context_window=<tokens>` in `~/.handoff/guard.conf` states the window outright; `context_hint_auto=off` turns the learning off. Tested in `check.sh` and on real transcripts.

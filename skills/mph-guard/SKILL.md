@@ -41,6 +41,7 @@ Adapt it to what you found, with the current values pre-selected:
   7. When a delete is blocked, suggest moving to: (e.g. ~/Desktop/To-delete/) ______
   8. [x] Tell me when the conversation gets long (at half the size where your model gets compacted, learned on this computer; 500k until then) and suggest a handoff
   9. [x] Before a clearly simple task on a large model, offer once to switch to a lighter one (I decide)
+ 10. [x] After a lot of work with no handoff (20 file edits), remind me once before I close the window
 
 Enter keeps the marks as shown.
 ```
@@ -60,6 +61,8 @@ Enter keeps the marks as shown.
    context_hint_tokens=500000,800000
    context_hint_command=mph-handoff   # or the user's own handoff command
    model_advice=on
+   handoff_reminder=on
+   handoff_reminder_edits=20
    ```
 2. **Registering the hook changes Claude Code's security settings, so show the exact change first** and wait for a clear yes:
    ```json
@@ -70,7 +73,7 @@ Enter keeps the marks as shown.
    ```json
    { "hooks": [ { "type": "command", "command": "python3 ~/.handoff/mph-context.py" } ] }
    ```
-   added to `hooks.UserPromptSubmit` (items 8 and 9 share this one entry). On Windows use `python` and the full path (`python %USERPROFILE%\\.handoff\\mph-guard.py`), since `~` and `python3` may not exist there. Read the file, add only this entry (skip if it is already there), keep everything else exactly as it was, and check the result is valid JSON.
+   added to `hooks.UserPromptSubmit` (items 8, 9 and 10 share this one entry; add it if any of them is on). On Windows use `python` and the full path (`python %USERPROFILE%\\.handoff\\mph-guard.py`), since `~` and `python3` may not exist there. Read the file, add only this entry (skip if it is already there), keep everything else exactly as it was, and check the result is valid JSON.
 3. **Test it** without risk, by piping sample calls into the script:
    ```bash
    echo '{"tool_name":"Bash","tool_input":{"command":"rm -rf demo"}}' | python3 ~/.handoff/mph-guard.py
@@ -82,6 +85,10 @@ Enter keeps the marks as shown.
 ### About the long-conversation hint
 
 The model cannot reliably feel how long its own conversation is, but Claude Code records the size after every reply. `mph-context.py` reads that before each user message; when a threshold is first crossed it shows a one-line note and asks the agent to suggest `mph-handoff` once, at a natural stopping point. Thresholds are in tokens, not percent, because context windows differ between models (200k, 1M); the defaults suit both. Change them in `guard.conf`.
+
+### About the handoff reminder
+
+The most common way to lose a session is to close the window without a handoff. The same hook counts file edits (Edit, Write, MultiEdit, NotebookEdit) since the last handoff in this session; at 20 (`handoff_reminder_edits`) the agent mentions `mph-handoff` once, at a natural stopping point. A handoff resets the count. If one is missed anyway, the next `mph-resume` notices the unsaved work and offers to catch the note up from git.
 
 ### About the model advice
 

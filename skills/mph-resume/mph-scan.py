@@ -159,6 +159,84 @@ def git(code, *args):
         return ""
 
 
+def since_note(i):
+    """Work done after the resume note was last written, i.e. a session that
+    ended without a handoff. Returns (commits, latest commit subject, uncommitted
+    or changed files, how it was measured), or None if nothing can be told."""
+    code, resume, notes = i["code"], i["resume"], i["notes"]
+    if not resume.is_file():
+        return None
+    if git(code, "rev-parse", "--is-inside-work-tree"):
+        # the last commit that touched the resume note marks the last handoff
+        # (works when the notes live in the same repo; otherwise the note's date is used)
+        last = git(resume.parent, "log", "-1", "--format=%H", "--", resume.name)
+        same_repo = bool(last) and subprocess_ok(code, "merge-base", "--is-ancestor", last, "HEAD")
+        # only this project's folder counts (a repo can hold several projects), and
+        # changes to the notes themselves are the handoff, not unsaved work
+        try:
+            rel_notes = str(notes.relative_to(code)).replace(os.sep, "/")
+        except ValueError:
+            rel_notes = None
+        spec = ["--", "."] + ([f":(exclude){rel_notes}"] if rel_notes and rel_notes != "." else [])
+        if same_repo:
+            log = git(code, "log", "--format=%s", f"{last}..HEAD", *spec)
+        else:
+            d, _ = note_date(resume)
+            log = git(code, "log", "--format=%s", f"--since={d.isoformat()} 23:59", *spec) if d else ""
+        commits = log.splitlines() if log else []
+        dirty = [l for l in git(code, "status", "--short", *spec).splitlines() if l.strip()]
+        return len(commits), (commits[0] if commits else ""), len(dirty), "git"
+    # no git: files in the code folder changed after the resume note (the notes folder itself does not count)
+    try:
+        since = resume.stat().st_mtime
+    except OSError:
+        return None
+    changed, seen, stack = 0, 0, [(code, 0)]
+    while stack and seen < 3000:
+        d, lvl = stack.pop()
+        try:
+            entries = list(os.scandir(d))
+        except OSError:
+            continue
+        for e in entries:
+            seen += 1
+            if e.name.startswith(".") or e.name in SKIP:
+                continue
+            p = Path(e.path)
+            if e.is_dir(follow_symlinks=False):
+                if lvl < 4 and p.resolve() != notes:
+                    stack.append((p, lvl + 1))
+            elif e.is_file(follow_symlinks=False):
+                try:
+                    if e.stat().st_mtime > since + 60:
+                        changed += 1
+                except OSError:
+                    pass
+    return 0, "", changed, "files"
+
+
+def subprocess_ok(code, *args):
+    try:
+        return subprocess.run(["git", "-C", str(code), *args], capture_output=True, timeout=15).returncode == 0
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+
+
+def since_line(s):
+    """One line for the scanner output, or '' when nothing happened after the note."""
+    if not s:
+        return ""
+    commits, latest, files, how = s
+    if how == "files":
+        return f"since note: {files} file{'s' if files > 1 else ''} changed (no git)" if files else ""
+    parts = []
+    if commits:
+        parts.append(f"{commits} commit{'s' if commits > 1 else ''} (latest: {latest[:80]})")
+    if files:
+        parts.append(f"{files} uncommitted change{'s' if files > 1 else ''}")
+    return "since note: " + ", ".join(parts) if parts else ""
+
+
 def first_state_line(p):
     take = False
     for ln in read(p, 40).splitlines():
@@ -200,6 +278,9 @@ def dashboard(projects):
         now = now_section(i["backlog"])
         item = re.sub(r"^\s*([-*]|\d+\.)\s*(\[.\]\s*)?", "", now[0]).strip() if now else "(none)"
         print("now: " + (item[:157] + "..." if len(item) > 160 else item))
+        line = since_line(since_note(i))
+        if line:
+            print(line + " NOT HANDED OFF")
         print(f"notes: {i['notes']}")
 
 
@@ -218,10 +299,13 @@ def load(pm):
             print(f"\n=== WORKING STYLE {p}\n" + read(p).strip())
     d, _ = note_date(i["resume"])
     last = git(i["code"], "log", "-1", "--format=%cs")
+    s = since_note(i)
     if last and d:
-        newer = git(i["code"], "log", "--oneline", f"--since={d.isoformat()} 23:59")
-        n = len(newer.splitlines()) if newer else 0
+        n = s[0] if s else 0
         print(f"\n=== DRIFT\nlast commit {last}; note {d.isoformat()}; commits after the note: {n}")
+    line = since_line(s)
+    if line:
+        print(f"\n=== NOT HANDED OFF\n{line}\n(the last session ended without mph-handoff; offer a catch-up from git)")
 
 
 def facts(pm):
